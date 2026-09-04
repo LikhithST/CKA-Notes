@@ -20,7 +20,7 @@ In modern Kubernetes, the node agent (`kubelet`) does **not** manage low-level L
 
 ```mermaid
 flowchart TD
-    subgraph Legacy["Legacy Architecture (Pre-v1.24)"]
+    subgraph Legacy["Legacy Architecture (v1.23 and earlier)"]
         K1["kubelet"] --> DS["dockershim<br/>(In-tree adapter)"]
         DS --> DD["Docker Daemon<br/>(dockerd)"]
         DD --> CD1["containerd"]
@@ -28,12 +28,12 @@ flowchart TD
         R1 --> C1["Containers / Pods"]
     end
 
-    subgraph Modern["Modern Architecture (v1.24+)"]
-        K2["kubelet"] -->|CRI (gRPC)| CD2["containerd<br/>(with CRI plugin)"]
+    subgraph Modern["Modern Architecture (v1.24 and later)"]
+        K2["kubelet"] -->|CRI gRPC| CD2["containerd<br/>(with CRI plugin)"]
         CD2 --> R2["runc"]
         R2 --> C2["Containers / Pods"]
         
-        K2 -. Alternative CRI .-> CRIO["CRI-O"]
+        K2 -.->|Alternative CRI| CRIO["CRI-O"]
         CRIO -.-> R3["runc / crun"]
         R3 -.-> C3["Containers / Pods"]
     end
@@ -248,10 +248,10 @@ version = 2
 flowchart TD
     Err["crictl ps throws endpoint error"] --> CheckEnv{"Is /etc/crictl.yaml present?"}
     CheckEnv -- No --> CreateConfig["Create /etc/crictl.yaml with containerd socket"]
-    CheckEnv -- Yes --> CheckSocket{"Does socket file exist in /run/containerd/?"}
+    CheckEnv -- Yes --> CheckSocket{"Does socket file exist in /run/containerd?"}
     CheckSocket -- No --> CheckService{"Is containerd.service running?"}
     CheckService -- No --> StartService["systemctl restart containerd<br/>systemctl enable containerd"]
-    CheckService -- Yes --> CheckPerms["Check file permissions & socket path typos"]
+    CheckService -- Yes --> CheckPerms["Check file permissions and socket path typos"]
     CheckSocket -- Yes --> TestCRI["Run: crictl info"]
 ```
 
