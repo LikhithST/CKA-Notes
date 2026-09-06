@@ -2,21 +2,44 @@
 
 > **Exam Domain**: Cluster Architecture, Installation & Configuration (25%) / Troubleshooting (30%)  
 > **Weight / Importance**: Critical  
-> **Allowed Docs Search Keywords**: `container runtimes`, `crictl`, `containerd`, `dockershim removal`
+> **Target Version**: Verified against v1.31 / v1.32 (Current CKA Curriculum)  
+> **Allowed Docs Search Keywords**: `container runtimes`, `crictl`, `containerd`, `dockershim removal`  
+> **Source**: Generated from `docker-vs-containerd-raw.md`
 
 ---
 
-## 1. Conceptual Overview & Mental Model
+## 1. Quick-Reference Summary
+
+- **Dockershim Removal**: Removed in Kubernetes v1.24. Direct path is `kubelet -> CRI (gRPC) -> containerd -> runc`.
+- **Docker Images**: Images built with `docker build` continue to run seamlessly in `containerd` and `CRI-O` because both comply with the **OCI Image Specification**.
+- **`crictl` vs `docker` on Exam**: The `docker` CLI is **not installed** on modern CKA worker nodes. Use `crictl` for all node-level container diagnostics.
+- **`crictl` Pod Awareness**: Unlike `docker`, `crictl` natively understands Kubernetes Pods (`crictl pods`, `crictl inspectp`).
+- **Kubelet Lifecycle Rule**: `kubelet` maintains the desired pod headcount. If you create a container manually using `crictl` or `ctr`, Kubelet is unaware of it and will immediately terminate/garbage-collect it. Use `crictl` **strictly for debugging and inspection**.
+- **CRI Sockets**:
+  - `containerd`: `unix:///run/containerd/containerd.sock` (modern standard)
+  - `CRI-O`: `unix:///run/crio/crio.sock`
+  - `dockershim`: `unix:///var/run/dockershim.sock` (**obsolete / removed**)
+- **`crictl` Config**: File `/etc/crictl.yaml` with `runtime-endpoint` and `image-endpoint`. Fixes `runtime endpoint not set` errors.
+- **cgroup Driver Parity**: `/etc/containerd/config.toml` must have `SystemdCgroup = true` under runc options to prevent Kubelet startup crashes.
+- **`ctr` Namespace Trap**: `ctr` defaults to the `default` namespace. Kubernetes workloads reside in `--namespace k8s.io`.
+- **Disk Pressure Remediation**: Prune cached images on a node with `crictl rmi --prune`.
+
+---
+
+## 2. Conceptual Overview & Mental Model
 
 In modern Kubernetes, the node agent (`kubelet`) does **not** manage low-level Linux namespaces, cgroups, or container processes directly. Instead, it delegates all container lifecycle management to an underlying container runtime via the **Container Runtime Interface (CRI)**.
 
-### The Evolution: Docker vs. CRI vs. containerd
+### Dual-Layer Architectural Understanding
 
-1. **Early Kubernetes**: Natively hardcoded to Docker Engine. Kubelet directly invoked Docker's API.
-2. **Growth of Alternatives**: New container runtimes emerged (e.g., CoreOS `rkt`, `hyper`). Maintaining custom code inside Kubelet for every runtime was unsustainable.
-3. **Introduction of CRI (Kubernetes v1.5)**: A standardized **gRPC interface** allowing any runtime complying with Open Container Initiative (OCI) standards to plug into Kubelet seamlessly.
-4. **The "Dockershim" Era**: Because Docker was created before CRI and did not natively implement the CRI gRPC API, Kubernetes introduced an in-tree adapter called **`dockershim`** inside Kubelet.
-5. **Dockershim Removal (Kubernetes v1.24+)**: `dockershim` was officially removed. Kubernetes communicates directly with CRI-native runtimes like **`containerd`** and **`CRI-O`**. Docker images remain 100% compatible because both Docker and CRI runtimes adhere to the **OCI Image Specification**.
+- **Intuitive Mental Model (In Plain English)**:
+  - **Docker is a Full Suite, Not Just a Runtime**: Docker consists of multiple tools bundled together—the Docker CLI, REST API, build tools (`BuildKit`), volume/network plugins, security profiles, the container supervisor daemon (`containerd`), and the low-level executor (`runc`).
+  - **The "Docker Exception" & Dockershim**: When Kubernetes created the CRI standard, other runtimes complied directly, but Docker did not. To support Docker, Kubernetes had to write and maintain a temporary in-tree translation adapter inside `kubelet` called **`dockershim`**.
+  - **Why Dockershim Was Removed**: Running Docker meant traffic traveled through redundant hops: `kubelet -> dockershim -> dockerd -> containerd -> runc`. Because `containerd` itself is already fully CRI-compliant, Kubernetes removed `dockershim` in v1.24 to talk directly to `containerd`, eliminating bloat and overhead.
+  - **Why Docker Images Still Work**: Images built with `docker build` continue to run seamlessly in `containerd` and `CRI-O` because Docker follows the open industry **OCI Image Specification**.
+
+- **Standard / Production Definition**:
+  Kubernetes delegates container execution to runtime engines implementing the **gRPC-based Container Runtime Interface (CRI)**. Since Kubernetes v1.24, in-tree dockershim support is completely removed; nodes run CRI-native runtimes (`containerd`, `CRI-O`) that invoke OCI-compliant runtime handlers (`runc`, `crun`).
 
 ```mermaid
 flowchart TD
@@ -41,36 +64,92 @@ flowchart TD
 
 > [!IMPORTANT]
 > **Docker vs. containerd Anatomy**:
-> Docker is not just a container runtime; it is a full platform suite containing the Docker CLI, REST API, build tools (`BuildKit`), volume drivers, network drivers, and security wrappers.
-> Under the hood, Docker donated its low-level runtime components to open source:
+> Under the hood, Docker donated its core runtime components to the open-source community:
 > - **`containerd`**: The container lifecycle daemon (a CNCF graduated project).
 > - **`runc`**: The OCI reference implementation for spawning Linux containers.
-> Because `containerd` is already CRI-compatible, running `containerd` directly eliminates the extra layer of `dockerd` and `dockershim`.
+> Because `containerd` is already CRI-compatible via its built-in CRI plugin, running `containerd` directly bypasses `dockerd` and `dockershim`.
 
 ---
 
-## 2. Standards: OCI & CRI
+## 3. Deep-Dive Technical Breakdown
 
-### 2.1 Open Container Initiative (OCI)
-Established by Docker and industry leaders in 2015 under the Linux Foundation to prevent container ecosystem fragmentation. Governed by two key specifications:
-1. **Image Specification (`image-spec`)**: Defines the format of container image manifests, filesystem layers, and serialization. This ensures an image built by `docker build` can be pulled and run by `containerd`, `CRI-O`, or `podman`.
-2. **Runtime Specification (`runtime-spec`)**: Defines container state, configuration, and execution lifecycle. `runc` is the CLI reference implementation used by containerd and Docker to spawn containers with Linux namespaces and cgroups.
+### 3.1 Open Container Initiative (OCI)
 
-### 2.2 Container Runtime Interface (CRI)
-- A plugin interface via **gRPC** allowing Kubelet to use a wide variety of container runtimes without recompiling Kubernetes code.
-- Consists of two primary gRPC client services:
-  - **`RuntimeService`**: Manages container and Pod sandbox lifecycles (start, stop, status, exec, attach).
-  - **`ImageService`**: Manages container image operations (pull, inspect, remove, list).
+- **Intuitive Understanding (In Plain English)**:
+  An open governance body founded to establish universal container formats so users aren't locked into any single vendor. It defines two simple, fundamental rules:
+  1. **Image Specification (`image-spec`)**: A standard recipe/specification for how container images must be built, layered, and packaged as tarballs. Any image built to this spec can run on any runtime.
+  2. **Runtime Specification (`runtime-spec`)**: A standard definition for how any runtime should run and manage container processes (state, environment, lifecycle). `runc` is the universal reference implementation that actually talks to Linux cgroups and namespaces.
+
+- **Standard / Production Definition**:
+  The OCI is a Linux Foundation project specifying portable, vendor-neutral container formats:
+  1. **OCI Image Specification**: Governs the manifest, layer tarballs, and configuration blobs.
+  2. **OCI Runtime Specification**: Defines container execution configuration and lifecycle hooks, implemented by low-level runners like `runc` and `crun`.
 
 ---
 
-## 3. CLI Ecosystem: `ctr` vs `nerdctl` vs `crictl` vs `docker`
+### 3.2 Container Runtime Interface (CRI)
+
+- **Intuitive Understanding (In Plain English)**:
+  The standard plug-in interface introduced by Kubernetes. Instead of Kubernetes hardcoding support for individual engines, Kubernetes created CRI as a universal gRPC socket. Any vendor's runtime can be used by Kubernetes as long as they implement this interface.
+
+- **Standard / Production Definition**:
+  A gRPC API consisting of two client services:
+  - **`RuntimeService`**: Handles Pod sandbox and container lifecycles (creation, execution, deletion, status).
+  - **`ImageService`**: Handles image pull, list, inspect, and remove operations.
+
+---
+
+### 3.3 Socket Paths & Runtime Configuration
+
+`crictl` requires a connection to the active runtime's UNIX domain socket:
+
+| Runtime | Socket Path | Status in Modern K8s |
+| :--- | :--- | :--- |
+| **containerd** | `unix:///run/containerd/containerd.sock` | **Standard Default** |
+| **CRI-O** | `unix:///run/crio/crio.sock` | **Supported Standard** |
+| **cri-dockerd** | `unix:///var/run/cri-dockerd.sock` | Third-party adapter (Mirantis) |
+| **dockershim** | `unix:///var/run/dockershim.sock` | **Removed / Obsolete** |
+
+#### Persistent `crictl` Endpoint Configuration
+File: `/etc/crictl.yaml`
+```yaml
+runtime-endpoint: "unix:///run/containerd/containerd.sock"
+image-endpoint: "unix:///run/containerd/containerd.sock"
+timeout: 10
+debug: false
+```
+
+#### containerd Central Configuration (`/etc/containerd/config.toml`)
+```toml
+version = 2
+[plugins]
+  [plugins."io.containerd.grpc.v1.cri"]
+    [plugins."io.containerd.grpc.v1.cri".containerd]
+      default_runtime_name = "runc"
+      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          runtime_type = "io.containerd.runc.v2"
+          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+            SystemdCgroup = true
+```
+
+> [!IMPORTANT]
+> **The `SystemdCgroup = true` Requirement**:
+> Kubernetes requires both the `kubelet` and the container runtime to use the **same cgroup driver**. On modern Linux distributions with systemd init (Ubuntu, Debian, RHEL, CentOS), both must be configured to use `systemd` (not `cgroupfs`).
+> In `/etc/containerd/config.toml`, ensure `SystemdCgroup = true`. After modifying, reload containerd:
+> ```bash
+> sudo systemctl restart containerd
+> ```
+
+---
+
+## 4. Command Translation & Mapping Tables
 
 When working on a Kubernetes node running `containerd`, you encounter three different command-line tools:
 
 ![Comparison of ctr, nerdctl, and crictl](Images/comparision-ctr-nerdctl-crictl.png)
 
-### 3.1 Tool Comparison Matrix
+### 4.1 CLI Tool Comparison Matrix
 
 | Attribute | `ctr` | `nerdctl` | `crictl` | `docker` |
 | :--- | :--- | :--- | :--- | :--- |
@@ -81,18 +160,15 @@ When working on a Kubernetes node running `containerd`, you encounter three diff
 | **Can Kubelet manage its containers?**| No | No | No (Kubelet kills unmanaged containers) | Only via `cri-dockerd` |
 | **Primary Use Case** | containerd maintainer debugging | Developer laptops, compose, rootless containers | **CKA Exam node troubleshooting & diagnostics** | Local container building & development |
 
-> [!WARNING]
-> **Do not use `crictl` or `ctr` to launch production pods!**  
-> `kubelet` is the authoritative orchestrator on the node. If you create a container manually with `crictl` or `ctr`, Kubelet has no record of it in its target Pod spec and will identify it as an orphaned container and delete/garbage-collect it. Use `crictl` **strictly for inspecting and debugging**.
-
 ---
 
-### 3.2 Tool Details & Usage
+### 4.2 Tool Details & Usage
 
 #### 1. `ctr` (containerd native CLI)
-- Shipped directly with the `containerd` binary.
-- Very low-level, unintuitive syntax (not user-friendly).
-- Requires namespace specification (defaults to `default`, Kubernetes workloads reside in `k8s.io`).
+- **Intuitive Understanding (In Plain English)**:
+  A bare-bones diagnostic CLI shipped bundled directly with `containerd`. It is designed solely for containerd maintainers to test the engine in isolation. It has an awkward, low-level syntax and is **not** used to run or manage containers in production or everyday development.
+- **Standard / Production Definition**:
+  Low-level development client for `containerd`. Does not speak the Kubernetes CRI API and defaults to the `default` namespace (requiring `--namespace k8s.io` to inspect Kubernetes pods).
 
 ```bash
 # Pull an image into containerd
@@ -109,27 +185,22 @@ ctr run docker.io/library/redis:alpine my-redis-debug
 ```
 
 #### 2. `nerdctl` (contaiNERD CTL)
-- A sub-project of containerd providing a **Docker-compatible CLI UX**.
-- Acts as a drop-in replacement for `docker` while talking directly to containerd.
-- Supports modern features:
-  - Docker Compose (`nerdctl compose up -d`)
-  - Lazy pulling (eStargz / Nydus)
-  - Encrypted container images
-  - P2P image distribution (IPFS)
-  - Image signing and verification (Cosign)
-  - Directly targeting Kubernetes containers: `nerdctl --namespace k8s.io ps`
+- **Intuitive Understanding (In Plain English)**:
+  A modern, user-friendly CLI that gives containerd the exact same look and feel as `docker`. It allows developers to use familiar commands (`run`, `ps`, `build`) and supports `docker compose`, while also supporting containerd's cutting-edge capabilities (lazy pulling, encrypted images, and seeing Kubernetes pods with `-n k8s.io`).
+- **Standard / Production Definition**:
+  A sub-project under `containerd` providing Docker CLI parity, rootless support, full Compose integration, and advanced containerd plugins (eStargz, IPFS, Cosign).
 
 #### 3. `crictl` (Kubernetes CRI Debug Tool)
-- Maintained by Kubernetes SIG-Node (`cri-tools`).
-- Standardized tool across all CRI runtimes (same commands work on containerd or CRI-O).
-- Talks directly to the CRI gRPC socket.
-- Pre-installed on all CKA exam clusters.
+- **Intuitive Understanding (In Plain English)**:
+  A diagnostic Swiss-army knife created and maintained by the Kubernetes community to interact with **any** CRI-compliant container runtime.
+  - *Why not create production pods with it?* Remember that `kubelet` is solely responsible for maintaining the desired number of pods on each node. If you create a container manually using `crictl`, `kubelet` is completely unaware of it and will immediately treat it as an alien/orphaned container and terminate it.
+  - *What is it best for?* It is the ideal tool for low-level node inspection, debugging failing containers, and checking runtime health when `kubectl` is unreachable.
+- **Standard / Production Definition**:
+  The official CLI tool maintained by Kubernetes SIG-Node (`cri-tools`) that speaks CRI directly over gRPC UNIX sockets to manage and inspect Pod sandboxes, containers, and cached node images across any CRI runtime (`containerd`, `CRI-O`).
 
 ---
 
-## 4. Command Translation Tables
-
-### 4.1 One-to-One Command Mapping: `docker` vs. `nerdctl`
+### 4.3 One-to-One Command Mapping: `docker` vs. `nerdctl`
 
 `nerdctl` syntax is virtually identical to `docker`:
 
@@ -148,7 +219,7 @@ ctr run docker.io/library/redis:alpine my-redis-debug
 
 ---
 
-### 4.2 CKA Exam High-Yield Mapping: `docker` vs. `crictl`
+### 4.4 CKA Exam High-Yield Mapping: `docker` vs. `crictl`
 
 On the CKA exam, `docker` is unavailable. Memorize these mappings to debug nodes via `crictl`:
 
@@ -174,69 +245,48 @@ On the CKA exam, `docker` is unavailable. Memorize these mappings to debug nodes
 
 ---
 
-## 5. Runtime Configuration & Endpoints
+## 5. High-Yield CLI & Imperative Commands
 
-### 5.1 Common Socket Paths
-`crictl` requires a connection to the active runtime's UNIX domain socket:
+### 5.1 Practical `crictl` Debugging Commands
 
-| Runtime | Socket Path | Status in Modern K8s |
-| :--- | :--- | :--- |
-| **containerd** | `unix:///run/containerd/containerd.sock` | **Standard Default** |
-| **CRI-O** | `unix:///run/crio/crio.sock` | **Supported Standard** |
-| **cri-dockerd** | `unix:///var/run/cri-dockerd.sock` | Third-party adapter (Mirantis) |
-| **dockershim** | `unix:///var/run/dockershim.sock` | **Removed / Obsolete** |
-
----
-
-### 5.2 Configuring `crictl` Endpoints
-
-If `crictl` outputs `runtime endpoint not set`, you must configure it using one of the following methods:
-
-#### Method 1: Configuration File (Recommended & Permanent)
-File: `/etc/crictl.yaml`
-```yaml
-runtime-endpoint: "unix:///run/containerd/containerd.sock"
-image-endpoint: "unix:///run/containerd/containerd.sock"
-timeout: 10
-debug: false
-```
-
-#### Method 2: Command-Line Flag
 ```bash
-crictl --runtime-endpoint unix:///run/containerd/containerd.sock ps
+# 1. Verify CRI socket connectivity and cgroup driver
+crictl info
+
+# 2. List all Pod sandboxes on the current node
+crictl pods
+
+# 3. List all containers including crashed/exited ones
+crictl ps -a
+
+# 4. Filter containers by pod ID
+crictl ps -a --pod <pod-id>
+
+# 5. Extract container logs directly from CRI runtime
+crictl logs <container-id>
+
+# 6. Stream live logs from container
+crictl logs -f <container-id>
+
+# 7. Execute command inside container
+crictl exec -it <container-id> sh
+
+# 8. Check live CPU/Memory utilization of containers on node
+crictl stats
 ```
 
-#### Method 3: Environment Variables
+### 5.2 One-Liner Shortcuts for CKA Exam Speed
+
 ```bash
-export CONTAINER_RUNTIME_ENDPOINT="unix:///run/containerd/containerd.sock"
-export IMAGE_SERVICE_ENDPOINT="unix:///run/containerd/containerd.sock"
+# Find container ID of the latest failed container
+crictl ps -a -q --state Exited | head -n 1
+
+# Immediately read logs of a crashing static pod (e.g. kube-apiserver)
+crictl logs $(crictl ps -a -q --name kube-apiserver | head -n 1)
+
+# Inspect pod sandbox network status
+crictl inspectp $(crictl pods -q --name <pod-name> | head -n 1) | grep -i ip
 ```
-
----
-
-### 5.3 containerd Configuration File (`/etc/containerd/config.toml`)
-
-The central configuration file for containerd:
-```toml
-version = 2
-[plugins]
-  [plugins."io.containerd.grpc.v1.cri"]
-    [plugins."io.containerd.grpc.v1.cri".containerd]
-      default_runtime_name = "runc"
-      [plugins."io.containerd.grpc.v1.cri".containerd.runtimes]
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-          runtime_type = "io.containerd.runc.v2"
-          [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
-            SystemdCgroup = true
-```
-
-> [!IMPORTANT]
-> **The `SystemdCgroup = true` Requirement**:
-> Kubernetes requires both the `kubelet` and the container runtime to use the **same cgroup driver**. On modern Linux distributions with systemd init (Ubuntu, Debian, RHEL, CentOS), both must be configured to use `systemd` (not `cgroupfs`).
-> In `/etc/containerd/config.toml`, ensure `SystemdCgroup = true`. After modifying, reload containerd:
-> ```bash
-> sudo systemctl restart containerd
-> ```
 
 ---
 
@@ -322,17 +372,6 @@ crictl rmi <image-id>
 
 ## 7. CKA Exam Tips, Gotchas & Traps
 
-> [!TIP]
-> **Finding Container IDs Quickly with `crictl`**:
-> To get just the container ID of the latest failed container:
-> ```bash
-> crictl ps -a -q --name <pod-or-container-name> | head -n 1
-> ```
-> Chain it directly to read logs:
-> ```bash
-> crictl logs $(crictl ps -a -q --name kube-apiserver | head -n 1)
-> ```
-
 > [!WARNING]
 > **Docker CLI is Not Installed on Exam Nodes**:
 > Do not attempt `docker ps`, `docker run`, or `docker images`. You will receive `command not found: docker`. Always use **`crictl`** on node VMs.
@@ -357,7 +396,33 @@ crictl rmi <image-id>
 
 ---
 
-## 8. Official Documentation Bookmarks
+## 8. Self-Test / Active Recall
+
+Test your comprehension before looking at the answers:
+
+1. **Why was dockershim deprecated and completely removed from Kubernetes in v1.24?**
+2. **Why do container images built with `docker build` continue to run without issue on containerd and CRI-O?**
+3. **What happens if you use `crictl` to launch a new container directly on a worker node?**
+4. **When executing `ctr images ls` on a Kubernetes node, why does the output return empty even though pods are running?**
+5. **If running `crictl ps` outputs `runtime endpoint not set`, how do you make the endpoint persistent?**
+6. **Which configuration directive in `/etc/containerd/config.toml` must be set to `true` to ensure systemd cgroup compatibility with Kubelet?**
+7. **What `crictl` command removes all dangling and unused container images to alleviate node DiskPressure?**
+
+<details>
+<summary>Reveal Answers</summary>
+
+1. Because Docker did not natively implement CRI, requiring an in-tree adapter (`dockershim`) inside Kubelet that added architectural complexity, memory bloat, and extra hops (`kubelet -> dockershim -> dockerd -> containerd -> runc`). Since `containerd` natively speaks CRI, removing dockershim enables Kubelet to talk directly to `containerd`.
+2. Both Docker and modern CRI runtimes adhere strictly to the **Open Container Initiative (OCI) Image Specification**.
+3. `kubelet` is the authoritative manager of pod headcount on the node. Since Kubelet is unaware of containers created directly via `crictl`, it identifies them as orphaned/unmanaged and terminates or garbage-collects them.
+4. `ctr` defaults to the `default` namespace. Kubernetes workloads are isolated inside the **`k8s.io`** namespace (`ctr -n k8s.io images ls`).
+5. Populate `/etc/crictl.yaml` with `runtime-endpoint: unix:///run/containerd/containerd.sock` and `image-endpoint: unix:///run/containerd/containerd.sock`.
+6. `SystemdCgroup = true` under `[plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]`.
+7. `crictl rmi --prune`.
+</details>
+
+---
+
+## 9. Official Documentation Bookmarks
 
 Allowed for reference during the live exam at [kubernetes.io/docs](https://kubernetes.io/docs/home/):
 
@@ -367,4 +432,3 @@ Allowed for reference during the live exam at [kubernetes.io/docs](https://kuber
 | **Debugging with `crictl`** | `crictl` | Tasks > Administer a Cluster > Debugging Kubernetes nodes with crictl |
 | **Dockershim Removal FAQ** | `Dockershim FAQ` | Tasks > Administer a Cluster > Check whether Dockershim removal affects you |
 | **Cgroup Drivers** | `Cgroup drivers` | Getting Started > Production environment > Container Runtimes #cgroup-drivers |
-
