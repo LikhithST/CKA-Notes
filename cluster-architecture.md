@@ -27,11 +27,10 @@
 
 ### Dual-Layer Architectural Understanding
 
-- **Intuitive Mental Model (In Plain English)**:
-  - Think of a Kubernetes cluster like a large freight shipping operation:
-    - **Control Plane (Master Nodes)**: The port control office. It doesn't carry cargo itself; instead, it manages the central ledger, decides which ships dock where, issues work orders, and continuously checks on worker status.
-    - **Worker Nodes**: The actual cargo docks and ships that host the applications as containers and perform the heavy lifting of running containers and routing local traffic.
-    - **Container Runtime on Master Nodes**: Master nodes also require a container runtime engine (e.g. `containerd`) installed if control plane components are hosted as containers (static pods).
+- **Simple English Explanation (How It Works)**:
+  - **Control Plane (Master Nodes)**: The management and orchestration tier. It does not run user application containers directly; instead, it manages all cluster configuration, decides which worker nodes should run each pod, issues work instructions, and monitors cluster health.
+  - **Worker Nodes**: The workload execution machines that host and run the application containers. Each worker node runs an agent (`kubelet`), a network proxy (`kube-proxy`), and a container runtime (`containerd`) to launch containers and manage network traffic.
+  - **Container Runtime on Master Nodes**: Master nodes also require a container runtime engine installed because control plane components (`kube-apiserver`, `etcd`, `kube-scheduler`, `kube-controller-manager`) are themselves hosted as containers (static pods).
 
 - **Standard / Production Definition**:
   A Kubernetes cluster is a distributed system partitioned into two distinct operational tiers:

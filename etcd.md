@@ -39,10 +39,10 @@ In Kubernetes, **etcd** is the cluster's memory and state ledger. It holds the c
 
 ### Dual-Layer Architectural Understanding
 
-- **Intuitive Mental Model (In Plain English)**:
-  - **What is a Key-Value Store?**: Unlike traditional relational databases (SQL) that demand strict schemas, tables, primary keys, and support heavy multi-table joins, a key-value store is like an ultra-fast dictionary or phonebook. It simply pairs a unique key with a value (which can be a string, structured fields, or JSON blobs). It does not have a complex query engine, but in exchange, reads and writes are **blazing fast, lightweight, and flexible**—making it ideal for instant lookups.
-  - **The Kubernetes Ledger**: Think of etcd as the harbor master's permanent, tamper-proof registry logbook. Every time you run `kubectl get`, the API server reads from etcd. Every time you deploy a pod, scale a replica set, or join a worker node, the change is committed into etcd. A Kubernetes operation is only considered complete once it has been durably recorded into etcd.
-  - **Single Source of Truth**: Kubelet, Scheduler, and Controllers never talk to each other directly or touch etcd on their own. They watch the API server, which reads and writes state into this single central ledger.
+- **Simple English Explanation (How It Works)**:
+  - **What is a Key-Value Store?**: Unlike relational databases that require fixed schemas, tables, and foreign keys, a key-value store directly associates a piece of data (the value) with a unique identifier (the key). The stored value can be plain text, structured attributes, or serialized JSON. Because it avoids rigid schemas and complex multi-table joins, lookups and writes are **extremely fast, lightweight, and flexible**.
+  - **The Cluster State Store**: `etcd` stores the entire state of the Kubernetes cluster. When you run `kubectl get`, `kube-apiserver` retrieves the records from `etcd`. When you create a pod, scale a deployment, or join a worker node, the new state is saved to `etcd`. A cluster operation is only finalized once it is committed to `etcd`.
+  - **Single Source of Truth**: Kubelet, Scheduler, and Controllers never talk directly to `etcd`. All components interact solely through `kube-apiserver`, which enforces security and acts as the single reader and writer for `etcd`.
 
 - **Standard / Production Definition**:
   `etcd` is an open-source, strongly consistent, distributed, transactional key-value store developed by CoreOS (now a CNCF graduated project). It implements the **RAFT consensus algorithm** to provide sequential consistency for writes, linearizable reads, and high availability across distributed nodes. In Kubernetes, it persists the entire declarative state and runtime status of all resources in the cluster.

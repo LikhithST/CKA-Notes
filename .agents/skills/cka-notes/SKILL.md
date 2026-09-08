@@ -11,7 +11,7 @@ This skill defines the workflow and quality standards for transforming raw, info
 
 ## Core Principles & Guidelines
 
-Every generated note should read as house style, not a template mechanically filled in. In particular: whenever a component, architecture, or concept is explained anywhere in the document, always pair the intuitive, plain-English explanation from the raw notes (analogies, "why it works this way," simplified mental models — e.g. *"key-value store: no schema, no complex queries, but blazing fast — best for simple lookups"*) with the rigorous, exam-grade Kubernetes definition (e.g. *"etcd is a distributed, consistent, ACID-compliant key-value store implementing the RAFT consensus algorithm that acts as the single source of truth for cluster state"*). Never discard or sanitize the intuitive layer in favor of pure jargon — the reader needs both the mental model and the formal terminology.
+Every generated note should read as house style, not a template mechanically filled in. In particular: under the **Conceptual Overview**, explain concepts in **clear, simple English without using analogies, metaphors, or real-world comparisons** (e.g., do NOT use analogies like thermostats, airports, control towers, post offices, or shipping ports). Focus directly on how the component actually operates in the system, what concrete problem it solves, and why it works that way (e.g., *"key-value store: stores data without a rigid schema, does not support complex queries, but delivers blazing-fast, flexible key lookups"*). Always pair this direct, simple English explanation with the rigorous, exam-grade Kubernetes definition (e.g., *"etcd is a distributed, consistent, ACID-compliant key-value store implementing the RAFT consensus algorithm that acts as the single source of truth for cluster state"*). Never discard the understanding-level layer in favor of pure jargon, but keep it grounded in technical mechanics rather than external analogies.
 
 ### 1. Complete All `@TODO` Items
 - Inspect the raw note for any `@TODO` comments or requests (command mapping tables, comparison summaries, diagram requests).
@@ -35,7 +35,7 @@ Every generated `<topic>.md` must follow the consistent layout established acros
    - A dense, bullet-only summary of the topic's must-know facts, commands, ports, and gotchas — no prose, no diagrams. Meant for last-minute review under time pressure, distinct from the deep-dive sections below.
 3. **Conceptual Overview & Mental Model**:
    - High-level summary connecting the concepts.
-   - Intuitive explanation from the raw notes paired with the standard/formal definition (see Core Principles above).
+   - Direct, simple English explanation of the concept from the raw notes (STRICTLY NO analogies or metaphors; explain what it actually does in the system and why) paired with the standard/formal definition.
    - Clean Mermaid flowchart/diagram visualizing architecture, communication paths, or workflows.
 4. **Deep-Dive Technical Breakdown**:
    - Component roles, internal mechanics, configuration options, and topology reference tables.
@@ -79,7 +79,7 @@ To prevent Mermaid rendering and parsing errors across different markdown viewer
 ## Transformation Workflow
 
 1. **Read Raw File**: Thoroughly inspect `<topic>-raw.md` for covered topics, intuition/notes, analogies, and `@TODO` tasks.
-2. **Extract & Pair Explanations**: Preserve the user's intuitive understanding-level explanation and pair it with the formal Kubernetes architecture definition.
+2. **Extract & Pair Explanations**: Preserve the user's understanding-level explanation written in simple, direct English (strictly avoiding analogies or metaphors) and pair it with the formal Kubernetes architecture definition.
 3. **Draft Structured Note**: Populate the 9-part layout, resolving all `@TODO` items and adding relevant diagrams.
 4. **Verify Accuracy**: Cross-check technical claims, commands, flags, ports, and file paths against current kubernetes.io/docs (or another authoritative source) rather than trusting the raw note's phrasing as-is. Correct or flag anything that's outdated, imprecise, or version-dependent.
 5. **Validate**: Verify Mermaid diagram syntax, relative image links, and command accuracy.
