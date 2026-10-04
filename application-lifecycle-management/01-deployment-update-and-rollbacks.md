@@ -132,7 +132,7 @@ When updating a 5-replica deployment with default $25\%$ settings:
 - **`maxSurge: 25%`**: $\text{ceil}(5 \times 0.25) = 2$ extra pods. Maximum allowed pods during rollout = $5 + 2 = \mathbf{7\text{ pods}}$.
 - **`maxUnavailable: 25%`**: $\text{floor}(5 \times 0.25) = 1$ pod down. Minimum available pods during rollout = $5 - 1 = \mathbf{4\text{ pods}}$.
 
-![Deployment Update Strategy Description](Images/deployment-update-stratergy-description.png)
+![Deployment Update Strategy Description](Images/deployment-update-strategy-description.png)
 
 ---
 
