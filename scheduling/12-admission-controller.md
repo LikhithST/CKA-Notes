@@ -3,7 +3,7 @@
 > **Exam Domain**: Cluster Architecture, Installation & Configuration (25%) / Security & Scheduling  
 > **Weight / Importance**: High (Foundational security and governance mechanism tested via `kube-apiserver` static pod configuration, enabling/disabling built-in plugins, and diagnosing admission rejections)  
 > **Target Version**: Verified against v1.31 / v1.32 (Current CKA Curriculum)  
-> **Allowed Docs Search Keywords**: `Admission Controllers`, `enable-admission-plugins`, `NodeRestriction`, `DefaultStorageClass`, `AlwaysPullImages`  
+> **Allowed Docs Search Keywords**: `Admission Controllers`, `enable-admission-plugins`, `NodeRestriction`, `DefaultStorageClass`, `AlwaysPull../Images`  
 > **Source**: Generated from `scheduling/12-admission-controller-raw.md`
 
 ---
@@ -25,10 +25,10 @@
   - **`NodeRestriction`**: Limits Kubelet authority; prevents compromised nodes from modifying other nodes or pods.
   - **`NamespaceLifecycle`**: Rejects requests to non-existent or terminating namespaces; protects default system namespaces. (Replaces legacy `NamespaceExists`).
   - **`DefaultStorageClass`**: Automatically injects `storageClassName` into PVCs if omitted.
-  - **`AlwaysPullImages`**: Mutates `imagePullPolicy` to `Always` to enforce authentication on shared node image caches.
+  - **`AlwaysPull../Images`**: Mutates `imagePullPolicy` to `Always` to enforce authentication on shared node image caches.
   - **`ResourceQuota`** & **`LimitRanger`**: Enforce compute limits and namespace quotas.
 - **Configuring `kube-apiserver`**:
-  - Add plugins: `--enable-admission-plugins=NodeRestriction,AlwaysPullImages`
+  - Add plugins: `--enable-admission-plugins=NodeRestriction,AlwaysPull../Images`
   - Remove plugins: `--disable-admission-plugins=DefaultStorageClass`
   - Manifest path: `/etc/kubernetes/manifests/kube-apiserver.yaml`
 
@@ -61,7 +61,7 @@ flowchart TD
     AC -- "Yes (Create / Modify)" --> Mutate["3a. Mutating Admission Plugins<br/>(DefaultStorageClass, MutatingWebhook)<br/>Modifies/Defaults object fields"]
 
     Mutate --> Schema["3b. Object Schema Validation<br/>(Validates field types and OpenAPI spec)"]
-    Schema --> Validate["3c. Validating Admission Plugins<br/>(NodeRestriction, ResourceQuota,<br/>AlwaysPullImages, ValidatingWebhook)"]
+    Schema --> Validate["3c. Validating Admission Plugins<br/>(NodeRestriction, ResourceQuota,<br/>AlwaysPull../Images, ValidatingWebhook)"]
 
     Validate -- "Validation Failed" --> Reject3["400 Bad Request / 403 Forbidden<br/>(Admission Rejected)"]
     Validate -- "Approved" --> ETCD[("4. Persist to etcd<br/>(Object Committed)")]
@@ -76,12 +76,12 @@ flowchart TD
 
 ### 3.1 The Security Flow: Securing Kubernetes
 
-![Securing Kubernetes](Images/securing-kubernetes.png)
+![Securing Kubernetes](../Images/securing-kubernetes.png)
 
 Every administrative action or workload deployment follows an end-to-end chain of trust from the client terminal to the control plane.
 
 #### Phase 1: Authentication (AuthN)
-![Authentication](Images/authentication.png)
+![Authentication](../Images/authentication.png)
 
 - Determines the authenticated user, UID, and group memberships.
 - Primary mechanisms:
@@ -93,7 +93,7 @@ Every administrative action or workload deployment follows an end-to-end chain o
 ---
 
 #### Phase 2: Authorization (AuthZ) & RBAC
-![Authorization](Images/authorization.png)
+![Authorization](../Images/authorization.png)
 
 Kubernetes evaluates the authenticated identity against active authorization modes configured via `--authorization-mode=Node,RBAC`:
 - **Node Authorization**: Dedicated authorizer for Kubelets to access their assigned pods, secrets, and configmaps.
@@ -112,7 +112,7 @@ rules:
     verbs: ["list", "get", "create", "update", "delete"]
 ```
 
-![Authorization RBAC](Images/authorization-rbac.png)
+![Authorization RBAC](../Images/authorization-rbac.png)
 
 RBAC can constrain actions by:
 - **API Group**: Core (`""`), `apps`, `batch`, `networking.k8s.io`, etc.
@@ -123,14 +123,14 @@ RBAC can constrain actions by:
 ---
 
 #### Phase 3: The Critical Limitations of RBAC
-![Authorization RBAC Limitations](Images/authorization-rbac-limitations.png)
+![Authorization RBAC Limitations](../Images/authorization-rbac-limitations.png)
 
 While RBAC excels at answering *"Can user Jane create pods in the production namespace?"*, it is structurally blind to the contents of the pod specification:
 
 | Security / Governance Requirement | Can RBAC Enforce This? | Why RBAC Fails | How Admission Controllers Solve This |
 | :--- | :--- | :--- | :--- |
 | **Block Root Containers** (`runAsUser: 0`) | **No** | RBAC checks only verbs (`create`) on resource types (`pods`). | `ValidatingAdmissionPolicy` or validating webhooks inspect `spec.securityContext.runAsUser`. |
-| **Allowed Image Registries** (e.g. `corp.io/*` only) | **No** | RBAC cannot parse container image strings. | Admission controllers parse container images and reject untrusted registries. |
+| **Allowed Image Registries** (e.g. `corp.io/*` only) | **No** | RBAC cannot parse container image strings. | Admission controllers parse container ../Images and reject untrusted registries. |
 | **Inject Default StorageClass** | **No** | RBAC cannot modify incoming request payloads. | `DefaultStorageClass` mutates the PVC spec before writing to etcd. |
 | **Enforce Resource Quotas** | **No** | RBAC does not track aggregate cluster or namespace CPU/RAM usage. | `ResourceQuota` counts existing compute usage and blocks pods exceeding quotas. |
 | **Prevent Node Compromise Escalation** | **No** | RBAC cannot restrict which node-specific labels a Kubelet can modify. | `NodeRestriction` blocks Kubelets from altering labels outside their authority. |
@@ -139,7 +139,7 @@ While RBAC excels at answering *"Can user Jane create pods in the production nam
 
 ### 3.2 Built-in Admission Controllers
 
-![Admission Controllers Inbuilt](Images/admission-controllers-inbuilt.png)
+![Admission Controllers Inbuilt](../Images/admission-controllers-inbuilt.png)
 
 Kubernetes ships with a rich suite of compiled-in admission controllers:
 
@@ -149,7 +149,7 @@ Kubernetes ships with a rich suite of compiled-in admission controllers:
 | **`NamespaceLifecycle`** | Validating | **Enabled** | Enforces that no new objects are scheduled into terminating namespaces. Prevents deletion of protected namespaces (`default`, `kube-system`, `kube-public`). |
 | **`DefaultStorageClass`** | Mutating | **Enabled** | Observes PVC creation requests omitting `spec.storageClassName` and automatically populates the field with the cluster's default `StorageClass`. |
 | **`DefaultTolerationSeconds`** | Mutating | **Enabled** | Automatically injects a 300-second toleration for `node.kubernetes.io/not-ready` and `node.kubernetes.io/unreachable` onto pods lacking explicit eviction tolerations. |
-| **`AlwaysPullImages`** | Mutating & Validating | *Disabled* | Mutates every pod's `imagePullPolicy` to `Always`. Critical in multi-tenant clusters so users cannot bypass image pull authentication by referencing images cached on shared worker nodes. |
+| **`AlwaysPull../Images`** | Mutating & Validating | *Disabled* | Mutates every pod's `imagePullPolicy` to `Always`. Critical in multi-tenant clusters so users cannot bypass image pull authentication by referencing ../Images cached on shared worker nodes. |
 | **`LimitRanger`** | Mutating & Validating | **Enabled** | Enforces container CPU/memory constraints defined in namespace `LimitRange` objects; injects default resource requests/limits if omitted. |
 | **`ResourceQuota`** | Validating | **Enabled** | Evaluates total CPU, memory, and object count across the namespace; rejects pod creation if namespace quotas would be exceeded. |
 | **`ServiceAccount`** | Mutating & Validating | **Enabled** | Automatically assigns `serviceAccountName: default` and mounts projected ServiceAccount tokens if the pod omits explicit credentials. |
@@ -160,7 +160,7 @@ Kubernetes ships with a rich suite of compiled-in admission controllers:
 
 ### 3.3 Enabling and Disabling Plugins in `kube-apiserver`
 
-![Enabling Admission Controllers](Images/enabling-admission-controllers.png)
+![Enabling Admission Controllers](../Images/enabling-admission-controllers.png)
 
 Admission plugins are configured directly as command-line arguments on the `kube-apiserver` process:
 
@@ -178,7 +178,7 @@ spec:
     - kube-apiserver
     - --authorization-mode=Node,RBAC
     - --advertise-address=192.168.1.10
-    - --enable-admission-plugins=NodeRestriction,AlwaysPullImages
+    - --enable-admission-plugins=NodeRestriction,AlwaysPull../Images
     - --disable-admission-plugins=DefaultStorageClass
     image: registry.k8s.io/kube-apiserver:v1.31.0
     name: kube-apiserver
@@ -190,7 +190,7 @@ Edit `/etc/systemd/system/kube-apiserver.service`:
 [Service]
 ExecStart=/usr/local/bin/kube-apiserver \
   --authorization-mode=Node,RBAC \
-  --enable-admission-plugins=NodeRestriction,AlwaysPullImages \
+  --enable-admission-plugins=NodeRestriction,AlwaysPull../Images \
   --disable-admission-plugins=DefaultStorageClass \
   --v=2
 ```
@@ -199,7 +199,7 @@ ExecStart=/usr/local/bin/kube-apiserver \
 
 ## 4. Declarative Manifests & Scaffolding Patterns
 
-### Complete Workflow: Enabling and Verifying `AlwaysPullImages`
+### Complete Workflow: Enabling and Verifying `AlwaysPull../Images`
 
 #### Step 1: Backup Existing API Server Manifest
 Before editing static pod manifests in an exam or production environment, always create a safe backup:
@@ -210,7 +210,7 @@ cp /etc/kubernetes/manifests/kube-apiserver.yaml /root/kube-apiserver.yaml.bak
 #### Step 2: Add Admission Plugin Flag
 Edit `/etc/kubernetes/manifests/kube-apiserver.yaml` and locate `--enable-admission-plugins`:
 ```yaml
-    - --enable-admission-plugins=NodeRestriction,AlwaysPullImages
+    - --enable-admission-plugins=NodeRestriction,AlwaysPull../Images
 ```
 
 #### Step 3: Monitor Static Pod Restart
@@ -239,7 +239,7 @@ spec:
 ```bash
 kubectl apply -f test-pod.yaml
 kubectl get pod test-pull-policy -o jsonpath='{.spec.containers[0].imagePullPolicy}{"\n"}'
-# Output: Always (Mutated automatically by AlwaysPullImages!)
+# Output: Always (Mutated automatically by AlwaysPull../Images!)
 ```
 
 ---
@@ -340,7 +340,7 @@ flowchart TD
 > [!TIP]
 > **Comma-Separated Lists Without Spaces**:
 > When enabling multiple plugins, format them as a single comma-separated string without spaces:
-> `--enable-admission-plugins=NodeRestriction,AlwaysPullImages`  
+> `--enable-admission-plugins=NodeRestriction,AlwaysPull../Images`  
 > Adding a space after a comma will truncate the command argument and crash the process.
 
 > [!CAUTION]
@@ -367,7 +367,7 @@ flowchart TD
 3. RBAC only governs API verbs on resource types and names; it cannot inspect, validate, or mutate the actual content/fields inside an object's specification (e.g. blocking root users, enforcing registries).
 4. Mutating controllers run first and can modify/default fields within the object. Validating controllers run second and can only allow or deny (reject) the request; they cannot mutate fields.
 5. `NodeRestriction`.
-6. `AlwaysPullImages`.
+6. `AlwaysPull../Images`.
 7. `--disable-admission-plugins=DefaultStorageClass`.
 </details>
 
@@ -382,4 +382,4 @@ Allowed for reference during the live exam at [kubernetes.io/docs](https://kuber
 | **Admission Controllers** | `Admission Controllers Reference` | Reference > Accessing the API > Admission Controllers |
 | **Enabling Admission Plugins** | `enable-admission-plugins` | Reference > Accessing the API > Using Admission Controllers |
 | **NodeRestriction** | `NodeRestriction plugin` | Reference > Accessing the API > Admission Controllers > NodeRestriction |
-| **AlwaysPullImages** | `AlwaysPullImages plugin` | Reference > Accessing the API > Admission Controllers > AlwaysPullImages |
+| **AlwaysPull../Images** | `AlwaysPull../Images plugin` | Reference > Accessing the API > Admission Controllers > AlwaysPull../Images |

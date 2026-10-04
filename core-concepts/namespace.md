@@ -89,9 +89,9 @@ Every freshly initialized cluster automatically provisions four default system n
 
 Kubernetes deploys CoreDNS in the `kube-system` namespace. CoreDNS continuously tracks all Services and endpoints, generating DNS A/AAAA and SRV records formatted by namespace:
 
-![DNS Cross-Namespace Communication](Images/namespace-service-access.png)
+![DNS Cross-Namespace Communication](../Images/namespace-service-access.png)
 
-![DNS FQDN Anatomy](Images/namespace-service-access-template.png)
+![DNS FQDN Anatomy](../Images/namespace-service-access-template.png)
 
 #### The Fully Qualified Domain Name (FQDN) Format:
 $$\textbf{\texttt{<service-name>}}.\textbf{\texttt{<namespace>}}.\textbf{\texttt{svc}}.\textbf{\texttt{<cluster-domain>}}$$
@@ -123,7 +123,7 @@ options ndots:5
 
 #### 1. Creating Namespaces (Imperative & Declarative)
 
-![Namespace Creation](Images/namespace-creation.png)
+![Namespace Creation](../Images/namespace-creation.png)
 
 - **Declarative Manifest (`namespace-dev.yaml`)**:
   ```yaml
@@ -143,7 +143,7 @@ options ndots:5
 
 #### 2. Assigning Resources to a Specific Namespace
 
-![Namespace Resource Creation](Images/namespace-resource-creation.png)
+![Namespace Resource Creation](../Images/namespace-resource-creation.png)
 
 When creating resources, the target namespace can be defined either in the YAML manifest or overridden on the command line:
 
@@ -182,7 +182,7 @@ kubectl run myapp-pod --image=nginx -n dev
 
 By default, every `kubectl` command targets the `default` namespace unless the `-n` / `--namespace` flag is supplied. To avoid typing `-n <namespace>` repeatedly during an exam task:
 
-![Switching Active Namespace](Images/namespace-switch.png)
+![Switching Active Namespace](../Images/namespace-switch.png)
 
 ```bash
 # 1. Check current active context
@@ -307,7 +307,7 @@ kubectl describe resourcequota compute-quota -n dev
 kubectl run test-dns --image=busybox:1.36 -it --rm -- nslookup db-service.dev.svc.cluster.local
 
 # Connect across namespaces using curl
-kubectl run curl-test --image=curlimages/curl -it --rm -- curl -I http://web-service.prod.svc.cluster.local
+kubectl run curl-test --image=curl../Images/curl -it --rm -- curl -I http://web-service.prod.svc.cluster.local
 ```
 
 ---

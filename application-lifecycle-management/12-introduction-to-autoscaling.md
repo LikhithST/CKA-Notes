@@ -41,8 +41,8 @@
     - **Workload Level**: Modulating the application footprint. You either create more Pod replicas across your existing cluster nodes (**Horizontal Pod Autoscaling**) or expand the CPU/RAM boundaries allocated to your existing containers (**Vertical Pod Autoscaling**).
     - **Infrastructure Level**: Modulating the underlying physical or virtual server capacity. When your cluster runs out of allocatable CPU or RAM, new Pods get stuck in `Pending`. You expand cluster capacity by joining new worker nodes to the control plane (**Cluster Autoscaler**).
 
-![Manually Scaling Workload](../Images/manual-horizontal-scaling-of-workload.png)
-![Resources for Manually Scaling](../Images/manual-vertical-scaling.png)
+![Manually Scaling Workload](../../Images/manual-horizontal-scaling-of-workload.png)
+![Resources for Manually Scaling](../../Images/manual-vertical-scaling.png)
 
 - **Formal Kubernetes Definition**:
   - Autoscaling is a closed-loop control system that dynamically adjusts compute resources based on real-time utilization telemetry. The Horizontal Pod Autoscaler automatically updates workload resources (such as Deployments or StatefulSets) to match demand, while the Cluster Autoscaler adjusts the size of the Kubernetes node pool when pods fail to schedule due to resource constraints or when nodes are consistently underutilized.
@@ -112,8 +112,8 @@ flowchart LR
 
 ### 3.3 Automated Workload Scaling: HPA vs. VPA
 
-![Horizontal Pod Autoscaler](../Images/horizontal-pod-autoscaler.png)
-![Vertical Pod Autoscaler](../Images/vertical-pod-autoscaler.png)
+![Horizontal Pod Autoscaler](../../Images/horizontal-pod-autoscaler.png)
+![Vertical Pod Autoscaler](../../Images/vertical-pod-autoscaler.png)
 
 #### Horizontal Pod Autoscaler (HPA)
 - **Role**: Adjusts the number of Pod replicas based on observed CPU/memory utilization or custom application metrics.
@@ -139,7 +139,7 @@ flowchart LR
 
 ### 3.4 Key Architectural Differences: HPA vs. VPA
 
-![Key Differences VPA HPA](../Images/key-differences-vpa-hpa.png)
+![Key Differences VPA HPA](../../Images/key-differences-vpa-hpa.png)
 
 | Evaluation Criteria | Vertical Pod Autoscaler (VPA) | Horizontal Pod Autoscaler (HPA) |
 | :--- | :--- | :--- |

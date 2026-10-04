@@ -160,7 +160,7 @@ kubectl replace --force -f /tmp/kubectl-edit-172948291.yaml
 
 Deployments manage Pods through underlying ReplicaSets. The relationship between fields determines how changes propagate:
 
-![Updating Deployments](Images/update-deployment.png)
+![Updating Deployments](../Images/update-deployment.png)
 
 #### Rollout-Triggering Changes vs. Scaling Changes
 - **Changes to `spec.template`**:
@@ -228,7 +228,7 @@ kubectl replace --force -f webapp.yaml
 
 | Technique | Target Object | Supported Properties | Downtime / Rollout Behavior | CKA Exam Recommendation |
 | :--- | :--- | :--- | :--- | :--- |
-| `kubectl edit pod <name>` | Standalone Pod | Images, tolerations only | In-place (no Pod restart) if image; fails on all other fields. | Use only for quick image or label updates. |
+| `kubectl edit pod <name>` | Standalone Pod | ../Images, tolerations only | In-place (no Pod restart) if image; fails on all other fields. | Use only for quick image or label updates. |
 | `kubectl replace --force -f <file>` | Standalone Pod | **All fields** | Pod terminated with grace-period 0; new Pod spawned immediately. | **Primary exam method** when modifying immutable Pod specs. |
 | `kubectl edit deployment <name>` | Deployment | **All fields** (`spec.template`, replicas, strategy) | Zero downtime; triggers automated rolling update. | **Primary exam method** for complex Deployment modifications. |
 | `kubectl set image deployment/...` | Deployment / Pod | Container image only | Zero downtime rolling update on Deployment; in-place restart on Pod. | **Fastest exam method** for simple image upgrades. |

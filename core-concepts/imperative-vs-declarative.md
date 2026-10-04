@@ -82,12 +82,12 @@ flowchart TD
 
 Kubernetes supports three distinct methods for creating, updating, and deleting cluster objects:
 
-![Imperative and Declarative Command Comparison](Images/imperative-and-declarative-cmds.png)
+![Imperative and Declarative Command Comparison](../Images/imperative-and-declarative-cmds.png)
 
 #### Approach 1: Pure Imperative CLI Commands
 Direct commands that specify resource operations on the command line without saving definitions to local files:
 
-![Imperative Commands for Creating and Updating Objects](Images/imperative-cmds.png)
+![Imperative Commands for Creating and Updating Objects](../Images/imperative-cmds.png)
 
 - **Object Creation**:
   - `kubectl run nginx --image=nginx` (Creates a Pod)
@@ -106,7 +106,7 @@ Direct commands that specify resource operations on the command line without sav
 
 In this hybrid approach, object specifications are written to local YAML or JSON files, but manipulated using imperative subcommands (`create`, `replace`, `delete`):
 
-![Imperative Object Configuration Files](Images/imperative-create-and-update.png)
+![Imperative Object Configuration Files](../Images/imperative-create-and-update.png)
 
 ```yaml
 # nginx.yaml
@@ -155,7 +155,7 @@ spec:
 
 In the declarative approach, users operate exclusively against local configuration files using `kubectl apply`:
 
-![Declarative Create and Update](Images/declarative-create-and-update.png)
+![Declarative Create and Update](../Images/declarative-create-and-update.png)
 
 ```bash
 # Create or update an individual object

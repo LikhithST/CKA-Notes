@@ -38,8 +38,8 @@
   - **The Boundary Between API and Compute**: The Kubernetes control plane (`kube-apiserver`, `etcd`, `kube-scheduler`, `kube-controller-manager`) manages cluster state and determines where workloads belong. However, control plane binaries do not log into host servers, install container packages, or run processes on worker machines.
   - **How a Node Joins the Cluster**: To become an active participant in the cluster, every host machine must run a persistent background daemon: the `kubelet`. When `kubelet` boots, it authenticates against `kube-apiserver` using TLS bootstrap certificates and issues an API registration request. This registration advertises the host's identity: its total CPU cores, allocatable memory, architecture, operating system kernel, and network IP addresses.
   - **Executing Workloads**: Once registered, `kubelet` establishes a constant watch connection to `kube-apiserver` for any Pod whose `spec.nodeName` matches its local hostname. When an assigned Pod is detected:
-    1. It reads the declarative PodSpec (container images, resource requests, volume mounts, probes).
-    2. It sends gRPC calls across a local Unix domain socket to the Container Runtime Interface (CRI)—such as `containerd`—to pull container images and spawn an isolated network sandbox (the pause container).
+    1. It reads the declarative PodSpec (container ../Images, resource requests, volume mounts, probes).
+    2. It sends gRPC calls across a local Unix domain socket to the Container Runtime Interface (CRI)—such as `containerd`—to pull container ../Images and spawn an isolated network sandbox (the pause container).
     3. It executes CNI network plugins to wire the container network interface into the cluster virtual network.
     4. It instructs CRI to start the application containers within that sandbox.
   - **Continuous Supervision**: Once containers are running, `kubelet` acts as the local supervisor. It executes configured `livenessProbe`, `readinessProbe`, and `startupProbe` checks. If a container process dies, `kubelet` triggers local restarts according to the Pod's `restartPolicy`. It continuously sends node status and Pod condition reports back to `kube-apiserver`.
@@ -83,7 +83,7 @@ flowchart TD
 
 Unlike other Kubernetes components (`kube-apiserver`, `kube-scheduler`, `kube-controller-manager`, `etcd`, `kube-proxy`) which `kubeadm` deploys automatically as static pods or DaemonSets, **`kubelet` must be installed manually on every node before running `kubeadm`**:
 
-![Installing kubelet Manual](Images/install-kubelet-manual.png)
+![Installing kubelet Manual](../Images/install-kubelet-manual.png)
 
 #### 1. Package Installation (Standard Ubuntu/Debian)
 ```bash
@@ -209,7 +209,7 @@ On the CKA exam, you will frequently need to inspect how `kubelet` is configured
 
 ### Method 1: Inspect the Running Process with `ps -aux` (Universal)
 
-![Viewing kubelet Options using ps](Images/viewing-kubelet-options-manual-ps.png)
+![Viewing kubelet Options using ps](../Images/viewing-kubelet-options-manual-ps.png)
 
 ```bash
 ps -aux | grep kubelet

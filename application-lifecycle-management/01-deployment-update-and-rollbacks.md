@@ -89,7 +89,7 @@ flowchart TD
 
 ### 3.1 Rollouts and Versioning Mechanics
 
-![Rollout and Versioning](Images/rollout-and-versioning.png)
+![Rollout and Versioning](../Images/rollout-and-versioning.png)
 
 When a Deployment is created or updated, the Kubernetes controller assigns an incremental **Revision Number** ($1, 2, 3, \dots$):
 
@@ -109,7 +109,7 @@ When a Deployment is created or updated, the Kubernetes controller assigns an in
 
 ### 3.2 Deployment Strategies: `RollingUpdate` vs. `Recreate`
 
-![Deployment Strategies](Images/deployment-strategies.png)
+![Deployment Strategies](../Images/deployment-strategies.png)
 
 Kubernetes supports two primary deployment strategies defined under `spec.strategy.type`:
 
@@ -132,13 +132,13 @@ When updating a 5-replica deployment with default $25\%$ settings:
 - **`maxSurge: 25%`**: $\text{ceil}(5 \times 0.25) = 2$ extra pods. Maximum allowed pods during rollout = $5 + 2 = \mathbf{7\text{ pods}}$.
 - **`maxUnavailable: 25%`**: $\text{floor}(5 \times 0.25) = 1$ pod down. Minimum available pods during rollout = $5 - 1 = \mathbf{4\text{ pods}}$.
 
-![Deployment Update Strategy Description](Images/deployment-update-strategy-description.png)
+![Deployment Update Strategy Description](../Images/deployment-update-strategy-description.png)
 
 ---
 
 ### 3.3 Updating a Deployment
 
-![Update Deployment](Images/update-deployment.png)
+![Update Deployment](../Images/update-deployment.png)
 
 Workloads can be updated using three different operational methods:
 
@@ -154,7 +154,7 @@ Workloads can be updated using three different operational methods:
 
 ### 3.4 Upgrades and Rolling Update Mechanics
 
-![Rolling Update Mechanism](Images/rolling-update-mechanism.png)
+![Rolling Update Mechanism](../Images/rolling-update-mechanism.png)
 
 During a rolling update, inspecting ReplicaSets reveals the handoff in progress:
 
@@ -177,7 +177,7 @@ The Deployment controller ensures:
 
 ### 3.5 Rollbacks Under the Hood
 
-![Rollback](Images/rollback.png)
+![Rollback](../Images/rollback.png)
 
 When an update introduces a breaking change or a crashing image, execute a rollback:
 

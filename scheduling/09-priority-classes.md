@@ -45,7 +45,7 @@
     1. **Queue Ordering**: When multiple Pods are waiting in the scheduling queue, the scheduler sorts them by their `priority` integer in descending order. Higher-priority pods are evaluated for node placement first.
     2. **Preemption (Eviction of Lower-Priority Pods)**: If a high-priority Pod arrives and no node has sufficient free capacity to satisfy its `requests`, the scheduler looks for nodes where evicting lower-priority Pods would clear enough room. Once a candidate node is identified, the scheduler issues graceful termination signals (`SIGTERM`) to the low-priority pods, frees the allocatable capacity, and binds the high-priority Pod.
 
-![Priorities](Images/priorities.png)
+![Priorities](../Images/priorities.png)
 
 ```mermaid
 flowchart TD
@@ -85,7 +85,7 @@ The 32-bit signed integer value dictates scheduling order:
 | **Default Priority** | `0` | Default assigned to any Pod that omits `priorityClassName`. | Default baseline |
 | **Batch / Low Priority** | Negative integers down to `-2,147,483,648` | Background batch jobs, reporting scripts, non-critical testing pods. | `low-priority`, `batch-workload` |
 
-![Listing Priority Classes](Images/listing-priority-classes.png)
+![Listing Priority Classes](../Images/listing-priority-classes.png)
 
 ```bash
 kubectl get priorityclass
@@ -104,7 +104,7 @@ system-node-critical      2000001000   false            30d   PreemptLowerPriori
 
 ### 3.2 Preemption Policies: `PreemptLowerPriority` vs. `Never`
 
-![Effect on Pod Priority](Images/effect-on-pod-priority.png)
+![Effect on Pod Priority](../Images/effect-on-pod-priority.png)
 
 The `preemptionPolicy` field controls whether a Pod can aggressively seize node capacity from running workloads:
 

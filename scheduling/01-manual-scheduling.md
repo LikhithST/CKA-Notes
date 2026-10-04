@@ -89,7 +89,7 @@ flowchart TD
 
 ### 3.1 How Scheduling Operates Internally
 
-![How Scheduling Works](Images/scheduler-working.png)
+![How Scheduling Works](../Images/scheduler-working.png)
 
 Under normal circumstances, `kube-scheduler` executes a three-stage pipeline for every unassigned Pod:
 1. **Queueing & Inspection**: The scheduler picks up Pods from its active scheduling queue where `spec.nodeName` is not set.
@@ -101,7 +101,7 @@ Under normal circumstances, `kube-scheduler` executes a three-stage pipeline for
 
 ### 3.2 Method 1: Specifying `nodeName` at Creation Time
 
-![No Scheduler - Manifest Creation](Images/no-scheduler-new-pod-creation.png)
+![No Scheduler - Manifest Creation](../Images/no-scheduler-new-pod-creation.png)
 
 When `kube-scheduler` is completely absent or non-functional:
 - Pods submitted without `nodeName` show `0/1 Pending` indefinitely.
@@ -140,7 +140,7 @@ error: pods "nginx" was not valid:
 
 ### 3.3 Method 2: Manually Binding an Existing Pod via the REST API
 
-![No Scheduler - Binding Existing Pod](Images/no-scheduler-existing-pod.png)
+![No Scheduler - Binding Existing Pod](../Images/no-scheduler-existing-pod.png)
 
 When an existing Pod is already in the `Pending` state and the exam or production scenario forbids recreating or deleting the Pod, you must simulate the scheduler by submitting a `Binding` object.
 
@@ -310,7 +310,7 @@ flowchart TD
    ```bash
    kubectl get nodes
    ```
-   If the node is `NotReady`, the `kubelet` on that node will not be able to pull images or launch containers.
+   If the node is `NotReady`, the `kubelet` on that node will not be able to pull ../Images or launch containers.
 
 3. **Check for Node Taints (`NoExecute`)**:
    `spec.nodeName` bypasses the scheduler, meaning `NoSchedule` taints will not prevent the Pod from being scheduled. However, if the node has a `NoExecute` taint and the Pod lacks a matching toleration, `kubelet` or the node lifecycle controller will evict the Pod immediately after placement. Verify taints with:

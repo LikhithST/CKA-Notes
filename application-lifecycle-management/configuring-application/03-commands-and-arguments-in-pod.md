@@ -85,7 +85,7 @@ flowchart TD
 
 ### 3.1 Mapping Docker to Kubernetes
 
-![Commands and Arguments](Images/commands-and-arguments.png)
+![Commands and Arguments](../../Images/commands-and-arguments.png)
 
 The direct mapping between the Dockerfile instructions and the Kubernetes Pod specification fields:
 

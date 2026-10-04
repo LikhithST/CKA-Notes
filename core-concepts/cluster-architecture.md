@@ -182,7 +182,7 @@ flowchart TD
 - **Intuitive Understanding (In Plain English)**:
   The underlying container execution engine. A container runtime (such as `containerd` or `CRI-O`) must be installed on all nodes—including master nodes if control plane components are run as containers.
 - **Standard / Production Definition**:
-  Software responsible for pulling container images, configuring namespaces/cgroups, and running containers via CRI.
+  Software responsible for pulling container ../Images, configuring namespaces/cgroups, and running containers via CRI.
 - **Modern Standards**:
   - Kubernetes uses the standard **CRI** (Container Runtime Interface).
   - **Supported Runtimes**: `containerd` and `CRI-O`.
@@ -293,7 +293,7 @@ flowchart TD
     KubeletCheck -- Yes --> CRICheck{"Is containerd running?"}
     CRICheck -- No --> StartCRI["systemctl restart containerd<br/>journalctl -u containerd -e"]
     CRICheck -- Yes --> DiskCheck{"Disk or Memory Pressure?"}
-    DiskCheck -- Yes --> FreeDisk["df -h<br/>Clean unused images: crictl rmi --prune"]
+    DiskCheck -- Yes --> FreeDisk["df -h<br/>Clean unused ../Images: crictl rmi --prune"]
     DiskCheck -- No --> CNICheck["Check CNI plugins in /etc/cni/net.d/"]
 ```
 

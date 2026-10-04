@@ -43,7 +43,7 @@
     1. **Filtering**: It checks each node in the cluster against the Pod's constraints (e.g., does the node have at least the requested CPU/RAM? Does it satisfy node selectors? Does it have taints the Pod cannot tolerate?). Any node that fails even one constraint is immediately eliminated.
     2. **Scoring**: From the surviving candidate nodes, the scheduler calculates a numerical score for each node based on configured optimization strategies (for example, favoring nodes that have more free memory after placing the Pod, or nodes that already have the container image cached locally).
     3. **Binding**: The node with the highest score is chosen. The scheduler sends an HTTP POST request (`Binding` object) to `kube-apiserver` to write the winning node's name into the Pod's `spec.nodeName` field in `etcd`.
-  - **What the Scheduler Does NOT Do**: The scheduler never connects to worker nodes, never downloads container images, and never starts containers. It purely makes an algorithmic calculation and updates the API record. Once `spec.nodeName` is recorded in `etcd`, the `kubelet` daemon running on that chosen worker node notices the assignment via its watch loop on `kube-apiserver`, pulls the image via the local Container Runtime Interface (CRI), and launches the container.
+  - **What the Scheduler Does NOT Do**: The scheduler never connects to worker nodes, never downloads container ../Images, and never starts containers. It purely makes an algorithmic calculation and updates the API record. Once `spec.nodeName` is recorded in `etcd`, the `kubelet` daemon running on that chosen worker node notices the assignment via its watch loop on `kube-apiserver`, pulls the image via the local Container Runtime Interface (CRI), and launches the container.
 
 ```mermaid
 flowchart TD
@@ -134,7 +134,7 @@ From the surviving candidate nodes that passed filtering, the scheduler calculat
 - **Resource Allocation Strategy**:
   - **`LeastAllocated` (Default)**: Favors nodes with fewer allocated resources, spreading Pods evenly across the cluster to maintain balanced resource availability.
   - **`MostAllocated`**: Favors nodes with higher allocated resources, packing Pods densely onto fewer nodes (common in cluster autoscaling environments to allow empty nodes to scale down).
-- **`ImageLocality`**: Awards higher scores to nodes that already have the container images cached locally in their container runtime, reducing image pull latency.
+- **`ImageLocality`**: Awards higher scores to nodes that already have the container ../Images cached locally in their container runtime, reducing image pull latency.
 - **`NodeAffinityScoring`**: Awards additional points to nodes matching `preferredDuringSchedulingIgnoredDuringExecution` affinity rules.
 - **`PodTopologySpread`**: Distributes Pods evenly across failure domains (zones, racks, hosts) to enhance high availability.
 
@@ -177,7 +177,7 @@ On clusters initialized with `kubeadm`, `kube-scheduler` runs as a **Static Pod*
 #### 2. Manual / Systemd Service Installation ("The Hard Way")
 In manual installations, the compiled binary is downloaded directly, configured with systemd, and executed as a host daemon:
 
-![Installing kube-scheduler](Images/installing-kube-scheduler.png)
+![Installing kube-scheduler](../Images/installing-kube-scheduler.png)
 
 ```bash
 # 1. Download official binary for target release (e.g., v1.31.0)
@@ -204,7 +204,7 @@ On the CKA exam, you will need to inspect how the scheduler is configured, verif
 
 For clusters deployed with `kubeadm`:
 
-![Viewing kube-scheduler options - Kubeadm](Images/viewing-kube-scheduler-options-kubeadm.png)
+![Viewing kube-scheduler options - Kubeadm](../Images/viewing-kube-scheduler-options-kubeadm.png)
 
 ```bash
 cat /etc/kubernetes/manifests/kube-scheduler.yaml
@@ -259,7 +259,7 @@ WantedBy=multi-user.target
 
 To verify the active command-line flags and configuration files currently loaded in memory:
 
-![Viewing kube-scheduler options using ps](Images/viewing-kube-scheduler-options-manual-ps.png)
+![Viewing kube-scheduler options using ps](../Images/viewing-kube-scheduler-options-manual-ps.png)
 
 ```bash
 ps -aux | grep kube-scheduler
@@ -485,7 +485,7 @@ Test your comprehension before clicking to reveal the solutions:
 <details>
 <summary>Reveal Answers</summary>
 
-1. **No**. `kube-scheduler` only computes the placement decision and creates a `Binding` object that updates `spec.nodeName` via `kube-apiserver`. The `kubelet` on that assigned worker node detects the assignment, downloads the container images, and starts the containers via the Container Runtime Interface (CRI).
+1. **No**. `kube-scheduler` only computes the placement decision and creates a `Binding` object that updates `spec.nodeName` via `kube-apiserver`. The `kubelet` on that assigned worker node detects the assignment, downloads the container ../Images, and starts the containers via the Container Runtime Interface (CRI).
 2. **Filtering (Predicates)**: Eliminates nodes that do not satisfy Pod constraints (insufficient resources, taints, selectors). **Scoring (Priorities)**: Evaluates and scores surviving candidate nodes on a 0–10 scale using priority algorithms, selecting the node with the highest aggregate score.
 3. `LeastAllocated` spreads Pods across nodes by favoring nodes with the most remaining unallocated resources. `MostAllocated` packs Pods onto fewer nodes by favoring nodes with higher allocated resources, facilitating node scale-down in autoscaled environments.
 4. Set `spec.nodeName: <node-name>` directly inside the Pod specification before creating the Pod.

@@ -82,7 +82,7 @@ flowchart TD
 ### 3.1 Understanding Compute Units
 
 #### 1. CPU Resource Units
-![Resource - CPU](Images/resource-cpu.png)
+![Resource - CPU](../Images/resource-cpu.png)
 
 - **What 1 CPU Means**:
   - 1 Kubernetes CPU unit is equivalent to **1 AWS vCPU**, **1 GCP Core**, **1 Azure vCore**, or **1 physical CPU hyperthread**.
@@ -93,7 +93,7 @@ flowchart TD
   - Lowest possible precision: **`1m`** (0.001 of a core).
 
 #### 2. Memory Resource Units
-![Resource - Memory](Images/resource-mem.png)
+![Resource - Memory](../Images/resource-mem.png)
 
 Memory is specified as a plain integer or as a fixed-point integer using standard quantity suffixes:
 - **Decimal Suffixes (SI / Powers of 10)**:
@@ -109,15 +109,15 @@ Memory is specified as a plain integer or as a fixed-point integer using standar
 
 ### 3.2 Resource Limits & Exceeding Thresholds
 
-![Resource Limits](Images/resource-limits.png)
+![Resource Limits](../Images/resource-limits.png)
 
 #### 1. CPU Throttling
-![Exceed Limits - CPU Throttling](Images/exceed-limit-cpu.png)
+![Exceed Limits - CPU Throttling](../Images/exceed-limit-cpu.png)
 
 CPU is a **compressible resource**. When a container process demands more CPU cycles than permitted by `resources.limits.cpu`, the Linux kernel Completely Fair Scheduler (CFS) restricts the number of execution time slices the process receives. The application experiences degraded performance and elevated latency, but **does not crash**.
 
 #### 2. Memory OOM Termination
-![Exceed Limits - Memory OOM Kill](Images/exceed-limit-mem.png)
+![Exceed Limits - Memory OOM Kill](../Images/exceed-limit-mem.png)
 
 Memory is an **incompressible resource**. A process cannot be throttled into using less RAM. If a container attempts to allocate memory beyond `resources.limits.memory`, the Linux cgroup memory controller triggers an Out-Of-Memory condition. The kernel immediately sends a `SIGKILL` signal to the process:
 - Container exits with status code **`137`** ($128 + 9$, where 9 is `SIGKILL`).
@@ -133,7 +133,7 @@ Memory is an **incompressible resource**. A process cannot be throttled into usi
 ### 3.3 The Four Behavioral Scenarios of Requests and Limits
 
 #### CPU Allocation Scenarios
-![Behavior - CPU Scenarios](Images/behaviour-cpu.png)
+![Behavior - CPU Scenarios](../Images/behaviour-cpu.png)
 
 1. **Scenario 1: No Requests, No Limits**:
    The Pod can consume all available CPU cycles on the node, potentially starving neighboring workloads.
@@ -145,7 +145,7 @@ Memory is an **incompressible resource**. A process cannot be throttled into usi
    The Pod is guaranteed its requested CPU shares, but is free to burst into unallocated idle node cycles when other pods are dormant.
 
 #### Memory Allocation Scenarios
-![Behavior - Memory Scenarios](Images/behaviour-mem.png)
+![Behavior - Memory Scenarios](../Images/behaviour-mem.png)
 
 1. **Scenario 1: No Requests, No Limits**:
    Unbounded memory consumption; the container can allocate RAM until the entire node runs out of memory, triggering node-wide evictions.
@@ -204,7 +204,7 @@ spec:
 
 ### 3.6 ResourceQuotas: Cumulative Namespace Ceilings
 
-![Resource Quotas](Images/resource-quotas.png)
+![Resource Quotas](../Images/resource-quotas.png)
 
 While `LimitRange` inspects individual Pods, a `ResourceQuota` tracks the **cumulative aggregate sum** of all Pods inside a namespace:
 

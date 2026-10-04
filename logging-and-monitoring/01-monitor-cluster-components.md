@@ -96,7 +96,7 @@ flowchart TD
 
 ### 3.1 Ecosystem Comparison: Available Monitoring Solutions
 
-![Monitoring Solutions Available](Images/monitoring-solutions-available.png)
+![Monitoring Solutions Available](../Images/monitoring-solutions-available.png)
 
 Kubernetes workloads can be monitored using native in-memory tools or external time-series observability stacks:
 
@@ -111,7 +111,7 @@ Kubernetes workloads can be monitored using native in-memory tools or external t
 
 ### 3.2 Metrics Pipeline Sources: cAdvisor & Kubelet
 
-![Various Sources of Metrics](Images/various-sources-of-metrics.png)
+![Various Sources of Metrics](../Images/various-sources-of-metrics.png)
 
 1. **cAdvisor Role**:
    - Integrated directly into the `kubelet` binary since early Kubernetes versions.
@@ -132,7 +132,7 @@ Kubernetes workloads can be monitored using native in-memory tools or external t
 
 ### 3.3 Deploying Metrics Server: `components.yaml` Breakdown
 
-![Installing Metrics Server](Images/installing-metrics-server.png)
+![Installing Metrics Server](../Images/installing-metrics-server.png)
 
 Metrics Server is deployed by applying the official manifest bundle ([`logging-and-monitoring/components.yaml`](file:///home/likhith/Documents/cka-notes/logging-and-monitoring/components.yaml)).
 

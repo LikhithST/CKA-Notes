@@ -65,9 +65,9 @@ flowchart TD
 
 All essential Kubernetes controllers are packaged together inside the `kube-controller-manager`:
 
-![List of Controllers](Images/list-of-controllers.png)
+![List of Controllers](../Images/list-of-controllers.png)
 
-![Kubernetes Controller Manager](Images/kubernetes-controller-manager.png)
+![Kubernetes Controller Manager](../Images/kubernetes-controller-manager.png)
 
 #### 1. Node Controller
 Responsible for observing node health and responding when worker nodes go down:
@@ -109,7 +109,7 @@ On clusters provisioned with `kubeadm`, KCM runs as a **Static Pod** managed by 
 #### 2. Manual / Systemd Service Installation ("Hard Way")
 In manual installations, the binary is downloaded directly from Google storage repositories and registered as a native systemd unit:
 
-![Installing kube-controller-manager](Images/kube-conroller-manager-install.png)
+![Installing kube-controller-manager](../Images/kube-conroller-manager-install.png)
 
 ```bash
 # 1. Download the official binary
@@ -133,7 +133,7 @@ On the CKA exam, you may be asked to inspect or modify KCM settings (e.g. adjust
 
 If the cluster was initialized using `kubeadm`:
 
-![Viewing kube-controller-manager options - Kubeadm](Images/viewing-kube-controller-manager-options-kubeadm.png)
+![Viewing kube-controller-manager options - Kubeadm](../Images/viewing-kube-controller-manager-options-kubeadm.png)
 
 ```bash
 cat /etc/kubernetes/manifests/kube-controller-manager.yaml
@@ -162,7 +162,7 @@ spec:
 
 If running as an independent host service:
 
-![Viewing controller-manager options - Manual Service](Images/viewing-kube-controller-manager-options-manual-service.png)
+![Viewing controller-manager options - Manual Service](../Images/viewing-kube-controller-manager-options-manual-service.png)
 
 ```bash
 cat /etc/systemd/system/kube-controller-manager.service
@@ -176,7 +176,7 @@ Look for flags appended to `ExecStart=/usr/local/bin/kube-controller-manager`.
 
 To see the exact live flags active in memory across all deployment models:
 
-![Viewing controller-manager options using ps](Images/viewing-kube-controller-manager-options-manual-ps.png)
+![Viewing controller-manager options using ps](../Images/viewing-kube-controller-manager-options-manual-ps.png)
 
 ```bash
 ps -aux | grep kube-controller-manager

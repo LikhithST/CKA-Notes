@@ -148,7 +148,7 @@ CMD ["5"]
 
 ### 3.4 The Bridge to Kubernetes: Command & Arguments Mapping
 
-![Commands and Arguments](Images/commands-and-arguments.png)
+![Commands and Arguments](../../Images/commands-and-arguments.png)
 
 When running containers in Kubernetes, the terminology is mapped as follows:
 

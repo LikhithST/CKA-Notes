@@ -235,7 +235,7 @@ kubectl apply -f replicaset-definition.yaml
 kubectl get replicaset
 kubectl get rs
 
-# 2. List ReplicaSets with wide output (shows current, desired, ready, and images)
+# 2. List ReplicaSets with wide output (shows current, desired, ready, and ../Images)
 kubectl get rs -o wide
 
 # 3. View detailed status, selector, conditions, and creation events

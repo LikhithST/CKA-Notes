@@ -242,7 +242,7 @@ k create clusterrolebinding view-nodes-binding --clusterrole=node-viewer --servi
 | :--- | :--- | :--- |
 | `-o yaml` | Prints the complete Kubernetes API object in YAML format | Scaffolding manifests and inspecting full specs |
 | `-o json` | Prints the complete API object in JSON format | Piping into `jq` for advanced field extraction |
-| `-o wide` | Displays additional columns (Node, Pod IP, Images, Selector) | Diagnosing node placement and pod IP assignments |
+| `-o wide` | Displays additional columns (Node, Pod IP, ../Images, Selector) | Diagnosing node placement and pod IP assignments |
 | `-o name` | Prints only the resource type and identifier (`pod/nginx`) | Passing directly to `kubectl delete $(...)` |
 | `-o jsonpath='{...}'` | Extracts exact JSON fields via JSONPath expression | Querying internal status (e.g. node internal IPs) |
 
@@ -256,7 +256,7 @@ k create clusterrolebinding view-nodes-binding --clusterrole=node-viewer --servi
 # 1. Extract all Node Internal IP addresses
 k get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="InternalIP")].address}'
 
-# 2. Extract container images from all running pods in a namespace
+# 2. Extract container ../Images from all running pods in a namespace
 k get pods -o jsonpath='{.items[*].spec.containers[*].image}'
 
 # 3. Sort nodes by OS image or kernel version

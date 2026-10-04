@@ -11,7 +11,7 @@
 ## 1. Quick-Reference Summary
 
 - **Core Purpose**:
-  - Stores and manages sensitive configuration data—such as passwords, OAuth tokens, SSH keys, and TLS certificates—decoupled from Pod specifications and container images.
+  - Stores and manages sensitive configuration data—such as passwords, OAuth tokens, SSH keys, and TLS certificates—decoupled from Pod specifications and container ../../Images.
 - **API Coordinates**:
   - `apiVersion: v1`, `kind: Secret`. Core API group (`""`).
 - **Namespace-Scoped**:
@@ -45,12 +45,12 @@
 
 - **Simple English Explanation (How It Works)**:
   - Applications need sensitive credentials (database passwords, API access tokens, TLS certificates) to communicate with external and internal systems.
-  - Storing credentials in container images or hardcoding them into Git repositories introduces severe operational and security liabilities.
+  - Storing credentials in container ../../Images or hardcoding them into Git repositories introduces severe operational and security liabilities.
   - A Kubernetes **Secret** object stores these credentials in the cluster's control plane data store (etcd).
   - When a Pod needs credentials, Kubernetes passes the Secret to the worker node hosting that Pod.
   - Kubelet mounts the secret directly into memory (**`tmpfs`**) without writing bytes to physical disk, and presents them to the container either as **environment variables** or as **in-memory plain-text files**.
 
-![Imperative Secrets Creation](../../Images/create-secrets-imperative.png)
+![Imperative Secrets Creation](../../../../Images/create-secrets-imperative.png)
 
 - **Formal Kubernetes Definition**:
   - A `Secret` is an object that contains a small amount of sensitive data such as a password, a token, or a key. Using a Secret means that you do not need to include confidential data in your application code. Because Secrets can be created independently of the Pods that use them, there is less risk of the Secret (and its data) being exposed during the workflow of creating, viewing, and editing Pods.
@@ -88,7 +88,7 @@ flowchart TD
 
 A Secret manifest provides two ways to declare payload values:
 
-![Declarative Secrets](../../Images/declarative-secrets.png)
+![Declarative Secrets](../../../../Images/declarative-secrets.png)
 
 #### 1. The `data` Field (Base64 Encoded)
 Every entry under `data` must be a valid base64-encoded string.
@@ -165,7 +165,7 @@ flowchart LR
 
 Kubernetes supports three primary patterns for passing Secret data to container workloads:
 
-![Secrets in Pods](../../Images/secrets-in-pod.png)
+![Secrets in Pods](../../../../Images/secrets-in-pod.png)
 
 #### Pattern 1: Bulk Environment Injection (`envFrom`)
 Loads all keys from the Secret as environment variables within the container.
@@ -218,7 +218,7 @@ spec:
 #### Pattern 3: Volume Mounts (`spec.volumes[].secret`)
 Projects each key in the Secret as an individual file containing the plain-text decoded value inside an in-memory directory.
 
-![Secrets in Pods as Volumes](../../Images/secrets-in-pod-as-volume.png)
+![Secrets in Pods as Volumes](../../../../Images/secrets-in-pod-as-volume.png)
 
 ```yaml
 apiVersion: v1
@@ -457,7 +457,7 @@ flowchart TD
 
 ---
 
-#### Symptom 3: `ImagePullBackOff` for Private Registry Images
+#### Symptom 3: `ImagePullBackOff` for Private Registry ../../Images
 1. **Diagnosis**:
    - Kubelet fails to authenticate to private registries (e.g. Docker Hub private repos, Quay, Harbor, ACR, ECR, GCR).
 2. **Resolution**:

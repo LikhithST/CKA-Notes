@@ -76,7 +76,7 @@ flowchart TD
 
 ### 3.1 Inspecting Resources with `kubectl explain`
 
-![kubectl explain root resource](Images/explain-resourse.png)
+![kubectl explain root resource](../Images/explain-resourse.png)
 
 When you execute `kubectl explain <resource>`, `kubectl` outputs:
 - `KIND`: The registered resource Kind (e.g., `Pod`, `Deployment`, `Service`).
@@ -85,7 +85,7 @@ When you execute `kubectl explain <resource>`, `kubectl` outputs:
 
 #### Traversing Nested Fields with Dot Notation
 
-![kubectl explain with field](Images/explain-resourse-with-field.png)
+![kubectl explain with field](../Images/explain-resourse-with-field.png)
 
 Appending field paths allows deep traversal of complex object schemas:
 ```bash

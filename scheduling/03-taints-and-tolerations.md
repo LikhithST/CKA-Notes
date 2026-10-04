@@ -49,7 +49,7 @@
   - **Tolerations Do Not Attract Workloads**:
     A common misconception is that adding a toleration to a Pod forces it onto the tainted node. It does not. A Pod with a GPU toleration can still be scheduled onto an untainted generic worker node if the scheduler scores it higher. To achieve dedicated placement, the Pod must declare **both** a toleration (to pass the node's barrier) and a `nodeSelector` / `nodeAffinity` (to attract the Pod specifically to that node).
 
-![Taints and Tolerations](Images/taints-and-toleration.png)
+![Taints and Tolerations](../Images/taints-and-toleration.png)
 
 ```mermaid
 flowchart TD
@@ -98,10 +98,10 @@ The effect parameter determines the enforcement severity applied to untolerating
 
 When a node receives a `NoExecute` taint, the node lifecycle controller evaluates all active containers currently running on the node:
 
-![Taint NoExecute - Before](Images/before-NoExecution-taint.png)
+![Taint NoExecute - Before](../Images/before-NoExecution-taint.png)
 *Before: Node 1 runs both Pod D (which tolerates the taint) and Pod C (which has no toleration).*
 
-![Taint NoExecute - After Eviction](Images/after-NoExecution-taint.png)
+![Taint NoExecute - After Eviction](../Images/after-NoExecution-taint.png)
 *After: Once the `NoExecute` taint is applied, Pod C is immediately evicted, while Pod D remains executing.*
 
 #### Grace Periods via `tolerationSeconds`

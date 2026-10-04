@@ -48,7 +48,7 @@
     2. **Namespace Sharing**: The container runtime creates an infrastructure ("pause") container that holds a Linux network namespace. All containers in the Pod join this shared network namespace, allowing them to communicate via `localhost` at memory-bus speeds.
     3. **Volume Sharing**: By declaring an ephemeral shared volume (an `emptyDir`), the web server writes to `/var/log/nginx/access.log`, and the log-shipping container mounts that exact directory to `/var/log/app/` and streams the files out.
 
-![Multi-Container Pods Overview](Images/multicontainer-pods.png)
+![Multi-Container Pods Overview](../Images/multicontainer-pods.png)
 
 ```mermaid
 flowchart TD
@@ -72,7 +72,7 @@ flowchart TD
 ```
 
 - **Standard / Production Definition**:
-  - **Multi-Container Pod**: An architectural deployment construct where two or more heterogeneous container specifications are declared within a single Pod manifest (`spec.containers`). The containers share an identical lifecycle boundary, Linux network and IPC namespaces, and storage volume mounts, implementing collaborative patterns without polluting independent container images.
+  - **Multi-Container Pod**: An architectural deployment construct where two or more heterogeneous container specifications are declared within a single Pod manifest (`spec.containers`). The containers share an identical lifecycle boundary, Linux network and IPC namespaces, and storage volume mounts, implementing collaborative patterns without polluting independent container ../Images.
 
 ---
 
@@ -80,7 +80,7 @@ flowchart TD
 
 ### 3.1 The Three Shared Primitives
 
-![Helper Containers](Images/multi-container-pod.png)
+![Helper Containers](../Images/multi-container-pod.png)
 
 #### 1. Shared Network Namespace
 - All containers in the Pod share the network stack created by the pod sandbox pause container.

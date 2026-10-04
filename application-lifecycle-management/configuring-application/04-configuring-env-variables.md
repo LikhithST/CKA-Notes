@@ -74,7 +74,7 @@ flowchart TD
 ```
 
 - **Standard / Production Definition**:
-  - **Pod Environment Variables**: Key-value string pairs injected into a container's POSIX execution context at startup via `spec.containers[].env` and `spec.containers[].envFrom`. They decouple runtime parameters, secret credentials, and cluster metadata from static container images, enabling dynamic workload configuration across deployment tiers.
+  - **Pod Environment Variables**: Key-value string pairs injected into a container's POSIX execution context at startup via `spec.containers[].env` and `spec.containers[].envFrom`. They decouple runtime parameters, secret credentials, and cluster metadata from static container ../../Images, enabling dynamic workload configuration across deployment tiers.
 
 ---
 
@@ -82,7 +82,7 @@ flowchart TD
 
 ### 3.1 Mapping Docker to Kubernetes
 
-![ENV in Kubernetes](Images/env-in-kubernetes.png)
+![ENV in Kubernetes](../../Images/env-in-kubernetes.png)
 
 In Docker, environment variables are passed imperatively via the `-e` flag:
 ```bash
@@ -110,7 +110,7 @@ spec:
 
 ### 3.2 The Three Environment Value Types
 
-![ENV Types](Images/env-types.png)
+![ENV Types](../../Images/env-types.png)
 
 Kubernetes supports three distinct mechanisms under `env` to populate an environment variable:
 
@@ -160,7 +160,7 @@ env:
 
 ### 3.3 Bulk Environment Injection (`envFrom`) vs. Single Injection vs. Volumes
 
-![Other Ways to Configure ENV](Images/other-ways-to-configure-env.png)
+![Other Ways to Configure ENV](../../Images/other-ways-to-configure-env.png)
 
 When an application requires dozens of configuration keys, specifying each key manually under `env` is tedious and error-prone. Kubernetes provides **`envFrom`** to bulk-import all keys:
 

@@ -79,7 +79,7 @@ flowchart TD
 
 ### 3.1 Extension Points Architecture
 
-![Extension Points](Images/extension-points.png)
+![Extension Points](../Images/extension-points.png)
 
 The scheduling framework organizes the lifecycle of a Pod into 11 distinct extension points:
 
@@ -119,7 +119,7 @@ Each plugin implements one or more extension point interfaces:
 6. **`NodeAffinity`** (`filter`, `score`):
    - Evaluates `requiredDuringSchedulingIgnoredDuringExecution` (filter) and `preferredDuringSchedulingIgnoredDuringExecution` (score).
 7. **`ImageLocality`** (`score`):
-   - Scores nodes higher if the required container images are already cached locally on the host, reducing image pull latency.
+   - Scores nodes higher if the required container ../Images are already cached locally on the host, reducing image pull latency.
 8. **`DefaultBinder`** (`bind`):
    - Submits the `Binding` object to `kube-apiserver`, finalizing the assignment of `spec.nodeName`.
 
@@ -127,7 +127,7 @@ Each plugin implements one or more extension point interfaces:
 
 ### 3.3 Multi-Profile Configuration: `KubeSchedulerConfiguration`
 
-![Scheduler Profiles](Images/scheduler-profile.png)
+![Scheduler Profiles](../Images/scheduler-profile.png)
 
 A single `KubeSchedulerConfiguration` manifest can define multiple distinct profiles:
 
@@ -162,7 +162,7 @@ profiles:
           - name: NodeResourcesFit
             weight: 50                 # Heavily prioritize resource fitting (bin-packing)
           - name: ImageLocality
-            weight: 10                 # Low priority for local container images
+            weight: 10                 # Low priority for local container ../Images
 ```
 
 ---

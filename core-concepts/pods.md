@@ -19,7 +19,7 @@
 - **Atomicity & Placement**: All containers inside a single Pod are **co-located and co-scheduled** onto the exact same worker node. A Pod cannot span across multiple physical or virtual nodes.
 - **Shared vs. Isolated Resources**:
   - **Shared**: Network namespace (same Pod IP, shared port space, inter-container communication via `localhost`), IPC namespace, and declared storage Volumes.
-  - **Isolated**: Linux mount/filesystem namespaces (independent container images), cgroups (individual container CPU and memory resource requests/limits).
+  - **Isolated**: Linux mount/filesystem namespaces (independent container ../Images), cgroups (individual container CPU and memory resource requests/limits).
 - **Horizontal Scaling Model**: Applications scale horizontally by adding **more Pod replicas**, not by adding identical duplicate application containers inside the same Pod (which causes network port binding collisions).
 - **Multi-Container Pod Patterns**:
   - **Sidecar**: Enhances or extends the main container (e.g., log shippers like Fluentd, metrics scrapers, service mesh proxies).
@@ -34,7 +34,7 @@
   - `kubectl get pods`: Lists pods in the current namespace.
   - `kubectl get pods -l <selector>`: Filters pods by label key-value pairs.
   - `kubectl describe pod <name>`: Deep inspection showing container state, conditions, IPs, and live events.
-- **Container Runtime Truth**: In modern Kubernetes (v1.24+ following dockershim removal), Kubernetes commands CRI runtimes (e.g., `containerd` or `CRI-O`) to pull OCI-compliant images and run OCI containers.
+- **Container Runtime Truth**: In modern Kubernetes (v1.24+ following dockershim removal), Kubernetes commands CRI runtimes (e.g., `containerd` or `CRI-O`) to pull OCI-compliant ../Images and run OCI containers.
 
 ---
 
@@ -118,7 +118,7 @@ spec:                       # Spec Dictionary: Defines the exact desired operati
     image: nginx            # Container Image: OCI image pulled from registry (Docker Hub / private)
 ```
 
-![Resource Kind and API Version Mapping](Images/resource-version-mapping.png)
+![Resource Kind and API Version Mapping](../Images/resource-version-mapping.png)
 
 > [!NOTE]
 > **Resource Kind vs. API Version Mapping**:
@@ -136,7 +136,7 @@ spec:                       # Spec Dictionary: Defines the exact desired operati
 
 ### 3.2 Single-Container vs. Multi-Container Pods
 
-![Multi-Container Pods](Images/multi-container-pod.png)
+![Multi-Container Pods](../Images/multi-container-pod.png)
 
 #### 1. Single-Container Pods ("One-Container-Per-Pod")
 The standard Kubernetes deployment pattern. In this model, the Pod acts as a direct wrapper around a single application container:
@@ -201,7 +201,7 @@ stateDiagram-v2
 ```
 
 #### Pod Phases:
-- **`Pending`**: Pod accepted by the cluster, but one or more containers are not yet running (e.g., unscheduled, downloading images).
+- **`Pending`**: Pod accepted by the cluster, but one or more containers are not yet running (e.g., unscheduled, downloading ../Images).
 - **`Running`**: Pod bound to a node, all containers created, and at least one container is currently executing or restarting.
 - **`Succeeded`**: All containers terminated successfully (exit code `0`); will not restart (typical for Jobs).
 - **`Failed`**: All containers terminated, with at least one container failing with non-zero exit status.

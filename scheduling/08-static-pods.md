@@ -86,7 +86,7 @@ flowchart TD
 The `kubelet` can be configured to watch static manifests via two mechanisms:
 
 #### 1. Via Configuration File (Modern Kubeadm Standard)
-![Configuring Static Pod with Config Option](Images/configuring-static-pod-with-config-option.png)
+![Configuring Static Pod with Config Option](../Images/configuring-static-pod-with-config-option.png)
 
 In modern Kubernetes clusters, `kubelet.service` passes the `--config` parameter:
 ```text
@@ -100,7 +100,7 @@ staticPodPath: /etc/kubernetes/manifests
 ```
 
 #### 2. Via Direct CLI Flag (Legacy / Custom Deployments)
-![Configuring Static Pod Manifest Path](Images/configuring-static-pod-manifest-path.png)
+![Configuring Static Pod Manifest Path](../Images/configuring-static-pod-manifest-path.png)
 
 The path can also be passed directly to the `kubelet` command line in `/etc/systemd/system/kubelet.service.d/10-kubeadm.conf`:
 ```text
@@ -133,7 +133,7 @@ staticPodPath: /etc/kubernetes/manifests
 
 ### 3.3 The Mirror Pod Lifecycle
 
-![Static Pods Listed by Kube API](Images/static-pods-listed-by-kubeapi.png)
+![Static Pods Listed by Kube API](../Images/static-pods-listed-by-kubeapi.png)
 
 When `kubectl get pods -A` is executed, static pods are visible alongside standard workloads:
 ```text
@@ -158,7 +158,7 @@ default       static-web-node01                       1/1     Running   0       
 
 ### 3.4 Static Pods vs. DaemonSets
 
-![Static Pods vs DaemonSets](Images/static-pod-vs-daemon-set.png)
+![Static Pods vs DaemonSets](../Images/static-pod-vs-daemon-set.png)
 
 | Dimension | Static Pod | DaemonSet |
 | :--- | :--- | :--- |

@@ -43,7 +43,7 @@
     3. When the workload controller (Deployment) notices a missing replica and requests a replacement Pod from the API server, the **VPA Admission Controller** catches the request and mutates its CPU/memory specifications to match the Recommender's optimal target.
     4. The newly created Pod starts on a node with the exact resources it needs.
 
-![Vertical Pod Autoscaler Overview](../Images/vertical-pod-autoscaler.png)
+![Vertical Pod Autoscaler Overview](../../Images/vertical-pod-autoscaler.png)
 
 - **Formal Kubernetes Definition**:
   - The `VerticalPodAutoscaler` is an API resource that automates the management of container resource requirements. The VPA controller frees users from needing to configure up-to-date resource limits and requests for their pods. When configured, it automatically sets the requests based on usage and thereby allows proper scheduling onto nodes so that appropriate resource amounts are available for each pod.
@@ -213,7 +213,7 @@ status:
 
 ### 3.5 VPA vs. HPA Key Differences
 
-![Key Differences VPA HPA](../Images/key-differences-vpa-hpa.png)
+![Key Differences VPA HPA](../../Images/key-differences-vpa-hpa.png)
 
 | Feature | Vertical Pod Autoscaler (VPA) | Horizontal Pod Autoscaler (HPA) |
 | :--- | :--- | :--- |

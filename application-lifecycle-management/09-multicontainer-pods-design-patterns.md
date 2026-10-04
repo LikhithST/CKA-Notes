@@ -48,7 +48,7 @@
   - Deploying them as separate Pods places them on different physical nodes across the cluster, preventing them from sharing fast in-memory communication or local disk volumes.
   - Kubernetes solves this through **Multi-Container Pods**. All containers in a Pod are scheduled onto the same physical node, join the same Linux network namespace, share the same Pod IP address, and can mount the same local `emptyDir` volumes.
 
-![Design Patterns Overview](../Images/multicontainer-design-patterns.png)
+![Design Patterns Overview](../../Images/multicontainer-design-patterns.png)
 
 - **Formal Kubernetes Definition**:
   - Multi-container Pods are an atomic scheduling unit where two or more tightly coupled containers share resources, storage volumes, and network namespaces. Containers inside a Pod are co-located, co-scheduled, and coordinate via shared volumes, process namespaces, or local network interfaces (`localhost`).
@@ -89,7 +89,7 @@ flowchart TD
   - All containers are expected to run indefinitely throughout the lifetime of the Pod.
   - If any container crashes, Kubelet restarts that individual container according to the Pod's `spec.restartPolicy` (default: `Always`). Other containers in the Pod continue running uninterrupted.
 
-![Co-located Containers](../Images/co-located-containers.png)
+![Co-located Containers](../../Images/co-located-containers.png)
 
 ```yaml
 apiVersion: v1
@@ -118,7 +118,7 @@ spec:
   - **Failure Handling**: If an init container fails (exit code $\neq 0$), Kubelet restarts the init container according to `spec.restartPolicy`. If the policy is `Never`, the entire Pod transitions to `Failed`.
   - **Completion**: Once an init container finishes with exit code `0`, its process terminates. It releases its active CPU and memory back to the node.
 
-![Regular Init Containers](../Images/init-containers.png)
+![Regular Init Containers](../../Images/init-containers.png)
 
 ```yaml
 apiVersion: v1
@@ -155,7 +155,7 @@ spec:
   - **Continuous Lifetime**: Unlike regular init containers, the sidecar stays active for the entire lifecycle of the Pod.
   - **Ordered Shutdown**: On Pod shutdown or Job completion, Kubelet terminates application containers first (`SIGTERM`). The sidecar container is kept alive until all app containers have fully exited, guaranteeing that logs, telemetry, and network connections are not cut off prematurely.
 
-![Sidecar Containers](../Images/sidecar-container.png)
+![Sidecar Containers](../../Images/sidecar-container.png)
 
 ```yaml
 apiVersion: v1
@@ -389,7 +389,7 @@ flowchart TD
 
     Inspect -->|Init:0/1 or Init:Error| InitFail["Init container failed or executing!"]
     Inspect -->|Init:CrashLoopBackOff| InitCrash["Init container script exited with non-zero code!"]
-    Inspect -->|PodInitializing| InitPass["Init containers done; downloading app images"]
+    Inspect -->|PodInitializing| InitPass["Init containers done; downloading app ../Images"]
     Inspect -->|CrashLoopBackOff| AppCrash["Application or Sidecar crashed during runtime"]
 
     InitFail --> CheckInitLog["Run: kubectl logs <pod-name> -c <init-container-name>"]

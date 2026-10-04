@@ -89,7 +89,7 @@ Value: {"name": "John Doe", "age": 45, "location": "New York", "salary": 5000}
 
 In Kubernetes, objects are serialized into Protobuf/JSON and stored under a strictly organized hierarchical directory structure:
 
-![Kubernetes Data Storage Directory Structure](Images/kubernetes-data-storage-directory-structure.png)
+![Kubernetes Data Storage Directory Structure](../Images/kubernetes-data-storage-directory-structure.png)
 
 #### Kubernetes Key Space Organization (`/registry`)
 
@@ -111,7 +111,7 @@ Kubernetes supports two primary methods for deploying etcd:
 #### 1. Kubeadm Managed Setup (Static Pod)
 By default, clusters bootstrapped via `kubeadm` deploy etcd as a **Static Pod** in the `kube-system` namespace.
 
-![etcd Kubeadm Setup](Images/etcd-kubeadm-setup.png)
+![etcd Kubeadm Setup](../Images/etcd-kubeadm-setup.png)
 
 - **Static Pod Manifest**: `/etc/kubernetes/manifests/etcd.yaml`
 - **Host Data Directory**: `/var/lib/etcd`
@@ -121,7 +121,7 @@ By default, clusters bootstrapped via `kubeadm` deploy etcd as a **Static Pod** 
 #### 2. Manual / External Setup (Linux Systemd Service)
 In enterprise or "Hard Way" topologies, etcd is installed directly onto dedicated machines or control plane nodes as an independent systemd service.
 
-![etcd Manual Setup](Images/etcd-maual-setup.png)
+![etcd Manual Setup](../Images/etcd-maual-setup.png)
 
 - **Binary Installation**: Binaries extracted and placed in `/usr/local/bin/etcd` and `/usr/local/bin/etcdctl`.
 - **Systemd Unit File**: `/etc/systemd/system/etcd.service`
@@ -141,7 +141,7 @@ In enterprise or "Hard Way" topologies, etcd is installed directly onto dedicate
 
 In production high-availability environments, etcd is distributed across multiple control plane nodes:
 
-![etcd in HA Environment](Images/etcd-ha-configuration.png)
+![etcd in HA Environment](../Images/etcd-ha-configuration.png)
 
 #### Peer Discovery & `--initial-cluster`
 To form an HA cluster, each etcd member must know the addresses of all other initial members. This is configured via the `--initial-cluster` parameter:

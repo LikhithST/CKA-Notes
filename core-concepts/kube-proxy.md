@@ -72,7 +72,7 @@ flowchart TD
 
 The core task of `kube-proxy` is translating the abstract Service definition into physical packet routing rules across all cluster nodes:
 
-![kube-proxy Enabling Service Concept](Images/kube-proxy-enabling-service-concept.png)
+![kube-proxy Enabling Service Concept](../Images/kube-proxy-enabling-service-concept.png)
 
 As shown in the architecture above:
 1. The service `db` is assigned a virtual ClusterIP `10.96.0.12`.
@@ -124,7 +124,7 @@ Introduced as beta in recent Kubernetes versions (v1.31), `nftables` mode direct
 #### 1. Kubeadm DaemonSet Setup (Standard)
 On clusters initialized with `kubeadm`, `kube-proxy` is deployed automatically as a **DaemonSet** in the `kube-system` namespace:
 
-![Installing kube-proxy Kubeadm](Images/installing-kube-proxy-kubeadm.png)
+![Installing kube-proxy Kubeadm](../Images/installing-kube-proxy-kubeadm.png)
 
 ```bash
 # Verify the kube-proxy DaemonSet
@@ -140,7 +140,7 @@ kubectl get pods -n kube-system -l k8s-app=kube-proxy -o wide
 #### 2. Manual Systemd Service Installation ("The Hard Way")
 In manual installations, the binary is downloaded directly from Google storage and configured as a host service:
 
-![Installing kube-proxy Manual](Images/installing-kube-proxy-manual.png)
+![Installing kube-proxy Manual](../Images/installing-kube-proxy-manual.png)
 
 ```bash
 # 1. Download official binary for target release (e.g., v1.31.0)

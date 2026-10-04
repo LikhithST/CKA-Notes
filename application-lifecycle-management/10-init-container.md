@@ -52,7 +52,7 @@
   - Init containers run in an isolated environment with their own specialized utilities and privileges before the main application starts.
   - They execute in a strict linear pipeline. Only when every init container finishes cleanly with exit code `0` does Kubelet start the main application containers.
 
-![Regular Init Containers](../Images/init-containers.png)
+![Regular Init Containers](../../Images/init-containers.png)
 
 - **Formal Kubernetes Definition**:
   - An `Init Container` is a specialized container that runs before the application containers in a Pod. Init containers can contain utilities or setup scripts not present in an app image. They always run to completion, each container must complete successfully before the next one starts, and if an init container fails, Kubernetes restarts the Pod until the init container succeeds (unless `restartPolicy: Never` is set).
@@ -87,7 +87,7 @@ During pod creation, `kubectl get pods` reports several distinct status strings 
 
 | Pod Phase / Status String | Technical Condition Behind the Status | Next Transition |
 | :--- | :--- | :--- |
-| **`Pending`** | Pod object accepted by API server and scheduled; container images not yet downloaded or container runtime not ready. | `Init:0/N` |
+| **`Pending`** | Pod object accepted by API server and scheduled; container ../Images not yet downloaded or container runtime not ready. | `Init:0/N` |
 | **`Init:0/N`** | The first init container (of $N$ total) is actively running or pulling its image. | `Init:1/N` upon exit code 0 |
 | **`Init:X/N`** | $X$ init containers have successfully finished with exit code `0`; init container $X+1$ is currently executing. | `Init:(X+1)/N` |
 | **`Init:Error`** | An init container failed during execution (exited with a non-zero status code). | `Init:CrashLoopBackOff` |
@@ -148,7 +148,7 @@ Because Kubelet may restart an init container multiple times (due to node reboot
 > - **GA (Generally Available)**: Kubernetes v1.31 / v1.32
 > Native sidecar containers are fully supported and enabled by default in all current CKA exam environments (v1.31 / v1.32).
 
-![Native Sidecar Container](../Images/sidecar-container.png)
+![Native Sidecar Container](../../Images/sidecar-container.png)
 
 #### How Native Sidecars Work Internally
 When an entry under `spec.initContainers` defines `restartPolicy: Always`, Kubelet handles it differently from both regular init containers and regular app containers:

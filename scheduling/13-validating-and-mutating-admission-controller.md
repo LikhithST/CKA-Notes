@@ -38,7 +38,7 @@
 
 - **Simple English Explanation (How It Works)**:
   - **Why Dynamic Webhooks are Needed**:
-    Built-in admission controllers (like `NodeRestriction` or `ResourceQuota`) are hardcoded inside the `kube-apiserver` binary. If your organization requires custom enterprise rules—such as requiring every pod to declare a billing cost-center tag, prohibiting images from unapproved registries, or automatically injecting an Envoy sidecar container—you cannot recompile the Kubernetes source code.
+    Built-in admission controllers (like `NodeRestriction` or `ResourceQuota`) are hardcoded inside the `kube-apiserver` binary. If your organization requires custom enterprise rules—such as requiring every pod to declare a billing cost-center tag, prohibiting ../Images from unapproved registries, or automatically injecting an Envoy sidecar container—you cannot recompile the Kubernetes source code.
   - **How Kubernetes Delegates to Webhooks**:
     Kubernetes provides an HTTP callback mechanism called **Dynamic Admission Control**:
     1. An operator creates an admission configuration resource in the cluster (`ValidatingWebhookConfiguration` or `MutatingWebhookConfiguration`).
@@ -89,9 +89,9 @@ flowchart TD
 
 ### 3.1 Mutating vs. Validating Admission Controllers
 
-![Validating Admission Controller](Images/validating-admission-controller.png)
-![Mutating Admission Controller](Images/mutating-admission-controller.png)
-![Mutating and Validating Admission Controller](Images/mutating-and-validating-admission-controller.png)
+![Validating Admission Controller](../Images/validating-admission-controller.png)
+![Mutating Admission Controller](../Images/mutating-admission-controller.png)
+![Mutating and Validating Admission Controller](../Images/mutating-and-validating-admission-controller.png)
 
 The admission pipeline strictly separates object mutation from object validation:
 
@@ -112,7 +112,7 @@ The admission pipeline strictly separates object mutation from object validation
 
 ### 3.2 The AdmissionReview Protocol & Request/Response Contract
 
-![Admission Webhook Server Request Response](Images/admission-webhook-server-request-response.png)
+![Admission Webhook Server Request Response](../Images/admission-webhook-server-request-response.png)
 
 When `kube-apiserver` contacts a webhook, both the request and response wrap within the `admission.k8s.io/v1` `AdmissionReview` structure.
 
@@ -159,7 +159,7 @@ When `kube-apiserver` contacts a webhook, both the request and response wrap wit
     "allowed": false,
     "status": {
       "code": 403,
-      "message": "Images with tag ':latest' are strictly prohibited in production."
+      "message": "../Images with tag ':latest' are strictly prohibited in production."
     }
   }
 }
@@ -191,7 +191,7 @@ A mutating webhook returns an array of JSONPatch operations, which must be **bas
 
 ### 3.3 Webhook Server Implementation (Python Flask Walkthrough)
 
-![Python Webhook Server](Images/python-webhook-server.png)
+![Python Webhook Server](../Images/python-webhook-server.png)
 
 A lightweight webhook server implementing both validation and mutation endpoints using Python Flask:
 
@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
 ### 3.4 Deploying and Exposing the Webhook Server
 
-![Deploying Webhook Server](Images/deploying-webhook-server.png)
+![Deploying Webhook Server](../Images/deploying-webhook-server.png)
 
 When hosting the webhook server inside the Kubernetes cluster:
 1. Containerize the application and deploy it as a `Deployment` inside a dedicated namespace (e.g. `webhook-namespace`).
@@ -287,8 +287,8 @@ When hosting the webhook server inside the Kubernetes cluster:
 
 ### 3.5 Webhook Client Configuration: External URL vs. Internal Service
 
-![Admission Webhook Configuration External URL](Images/admission-webhook-configuration-external-url.png)
-![Admission Webhook Configuration Deployment](Images/admission-webhook-configuration-deployment.png)
+![Admission Webhook Configuration External URL](../Images/admission-webhook-configuration-external-url.png)
+![Admission Webhook Configuration Deployment](../Images/admission-webhook-configuration-deployment.png)
 
 Under `clientConfig`, Kubernetes supports two routing topologies:
 
@@ -318,7 +318,7 @@ clientConfig:
 
 ### 3.6 Scoping Webhook Invocation via Rules
 
-![Admission Webhook Configuration With Rules](Images/admission-webhook-configuration-with-rules.png)
+![Admission Webhook Configuration With Rules](../Images/admission-webhook-configuration-with-rules.png)
 
 You do not want webhooks executing on every single API request. The `rules` block restricts invocation to target resource operations:
 

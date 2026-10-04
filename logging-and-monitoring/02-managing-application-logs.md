@@ -74,7 +74,7 @@ flowchart TD
 
 ### 3.1 Single-Container Pod Logging
 
-![Logging Single Container Pod](Images/logging-single-container-pod.png)
+![Logging Single Container Pod](../Images/logging-single-container-pod.png)
 
 When a Pod contains exactly one container, `kubectl` automatically selects that container:
 
@@ -107,7 +107,7 @@ kubectl logs -f event-simulator-pod
 
 ### 3.2 Multi-Container Pod Logging
 
-![Logging Multi-Container Pod](Images/logging-multicontainer-pod.png)
+![Logging Multi-Container Pod](../Images/logging-multicontainer-pod.png)
 
 When a Pod contains multiple containers (e.g. an application container and a sidecar or processor container):
 

@@ -48,8 +48,8 @@
     4. The Deployment's underlying ReplicaSet creates new Pods to share the workload, bringing average per-pod utilization back down to the target threshold.
     5. When traffic subsides, HPA observes the drop, waits out a 5-minute stabilization window, and scales replicas down to save cluster resources.
 
-![Manually Scaling Workload](../Images/manual-horizontal-scaling-of-workload.png)
-![Horizontal Pod Autoscaler Overview](../Images/horizontal-pod-autoscaler.png)
+![Manually Scaling Workload](../../Images/manual-horizontal-scaling-of-workload.png)
+![Horizontal Pod Autoscaler Overview](../../Images/horizontal-pod-autoscaler.png)
 
 - **Formal Kubernetes Definition**:
   - The `HorizontalPodAutoscaler` automatically updates a workload resource (such as a Deployment or StatefulSet), with the aim of automatically scaling the workload to match demand. The HPA is implemented as a Kubernetes API resource and a controller. The resource determines the behavior of the controller. The controller periodically adjusts the number of replicas in a replication controller or deployment to match observed metrics such as average CPU utilization, average memory utilization, or any other custom metric.
@@ -108,7 +108,7 @@ $$\text{Ratio} = \frac{\text{Current Metric Value}}{\text{Target Metric Value}}$
 
 ### 3.2 The Four Metric Sources (`autoscaling/v2`)
 
-![Various Sources of Metrics](../Images/various-sources-of-metrics.png)
+![Various Sources of Metrics](../../Images/various-sources-of-metrics.png)
 
 | Metric Type | Provided By | API Group | Target Types Supported | Example Use Cases |
 | :--- | :--- | :--- | :--- | :--- |
@@ -121,7 +121,7 @@ $$\text{Ratio} = \frac{\text{Current Metric Value}}{\text{Target Metric Value}}$
 
 ### 3.3 Declarative Manifest Anatomy (`autoscaling/v2`)
 
-![Declarative HPA](../Images/hpa-declarative.png)
+![Declarative HPA](../../Images/hpa-declarative.png)
 
 ```yaml
 apiVersion: autoscaling/v2
@@ -216,7 +216,7 @@ spec:
 
 ### Imperative Flags vs. Declarative Manifest Mapping
 
-![Imperative HPA](../Images/hpa-imperative.png)
+![Imperative HPA](../../Images/hpa-imperative.png)
 
 | Goal | Imperative CLI Command | Equivalent Declarative YAML Field |
 | :--- | :--- | :--- |

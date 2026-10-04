@@ -123,7 +123,7 @@ spec:
 #### 1. ClusterIP (Default Service Type)
 Allocates an internal virtual IP address from the cluster's CIDR range (`--service-cluster-ip-range`). It is accessible **only from within the cluster**:
 
-![ClusterIP Multi-Tier Microservices Architecture](Images/service-clusterIP-diagram.png)
+![ClusterIP Multi-Tier Microservices Architecture](../Images/service-clusterIP-diagram.png)
 
 ```yaml
 # service-clusterip.yaml
@@ -148,9 +148,9 @@ spec:
 #### 2. NodePort (External Host-Level Access)
 Allocates a dedicated port from the reserved range **`30000–32767`** and opens it on **every single node in the cluster**:
 
-![NodePort Single Node Architecture](Images/service-nodeport-diagram.png)
+![NodePort Single Node Architecture](../Images/service-nodeport-diagram.png)
 
-![NodePort Multi-Node Cluster Architecture](Images/service-nodeport-across-several-nodes-diagram.png)
+![NodePort Multi-Node Cluster Architecture](../Images/service-nodeport-across-several-nodes-diagram.png)
 
 ```yaml
 # service-nodeport.yaml
@@ -181,7 +181,7 @@ When you create a NodePort service, **the port is opened on every node in the cl
 #### 3. LoadBalancer (Cloud-Provider Integration)
 Extends `NodePort` and `ClusterIP` by orchestrating external cloud infrastructure:
 
-![Service LoadBalancer Cloud Integration](Images/service-loadbalancing-diagram.png)
+![Service LoadBalancer Cloud Integration](../Images/service-loadbalancing-diagram.png)
 
 ```yaml
 # service-loadbalancer.yaml

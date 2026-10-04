@@ -100,7 +100,7 @@ sequenceDiagram
 
 Because `etcd` stores all confidential cluster state (including secrets and tokens), communication between `kube-apiserver` and `etcd` is secured via mutual TLS (mTLS).
 
-![Connecting kube-apiserver to etcd](Images/kubeapi-server-connecting-to-etcd.png)
+![Connecting kube-apiserver to etcd](../Images/kubeapi-server-connecting-to-etcd.png)
 
 #### Key Configuration Flags:
 - `--etcd-servers=https://127.0.0.1:2379`: IP and port of the etcd cluster members. In HA clusters, multiple endpoints are passed as a comma-separated list.
@@ -122,7 +122,7 @@ In standard clusters built with `kubeadm`, the API server runs as a **Static Pod
 #### 2. Manual / "Hard Way" Setup (Systemd Service)
 In customized or bare-metal enterprise deployments, the API server binary is downloaded directly and managed as a Linux systemd unit.
 
-![Installing kube-apiserver as a Service](Images/install-kubeapi-server.png)
+![Installing kube-apiserver as a Service](../Images/install-kubeapi-server.png)
 
 - Binary Download:
   ```bash
@@ -148,7 +148,7 @@ On the CKA exam, you will frequently need to inspect how the API server is confi
 
 If the cluster was provisioned with `kubeadm`, view the manifest:
 
-![Viewing apiserver options - Kubeadm](Images/viewing-kubeapi-server-options-kubeadmin.png)
+![Viewing apiserver options - Kubeadm](../Images/viewing-kubeapi-server-options-kubeadmin.png)
 
 ```bash
 cat /etc/kubernetes/manifests/kube-apiserver.yaml
@@ -182,7 +182,7 @@ spec:
 
 If the cluster runs the API server as a native Linux service:
 
-![Viewing apiserver options - Manual Service](Images/viewing-kubeapi-server-options-manual-service.png)
+![Viewing apiserver options - Manual Service](../Images/viewing-kubeapi-server-options-manual-service.png)
 
 ```bash
 cat /etc/systemd/system/kube-apiserver.service
@@ -196,7 +196,7 @@ Look at the `ExecStart=/usr/local/bin/kube-apiserver \\` directive and all appen
 
 This method works in **all environments** regardless of whether it is managed by Kubelet or systemd:
 
-![Viewing apiserver options using ps](Images/viewing-kubeapi-server-options-using-ps.png)
+![Viewing apiserver options using ps](../Images/viewing-kubeapi-server-options-using-ps.png)
 
 ```bash
 ps -aux | grep kube-apiserver

@@ -91,7 +91,7 @@ flowchart TD
 
 ### 3.1 Scheduler Configuration: `KubeSchedulerConfiguration`
 
-![Kubernetes Scheduler Configuration](Images/kubernetes-scheduler-configuration.png)
+![Kubernetes Scheduler Configuration](../Images/kubernetes-scheduler-configuration.png)
 
 Every scheduler instance requires a configuration file conforming to the `kubescheduler.config.k8s.io/v1` API schema. This file defines the scheduler's logical identity, client connection parameters, and leader election semantics:
 
@@ -122,7 +122,7 @@ leaderElection:
 
 ### 3.2 Deployment Architecture Models
 
-![Deploying Additional Scheduler](Images/deploying-additional-scheduler.png)
+![Deploying Additional Scheduler](../Images/deploying-additional-scheduler.png)
 
 An additional scheduler can be deployed into a Kubernetes cluster using one of three primary deployment patterns:
 

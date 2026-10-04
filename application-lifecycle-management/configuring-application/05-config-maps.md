@@ -11,7 +11,7 @@
 ## 1. Quick-Reference Summary
 
 - **Core Purpose**:
-  - Decouples non-confidential configuration artifacts (environment variables, config files, command-line arguments, port numbers) from container images to keep workloads portable across dev, test, and production environments.
+  - Decouples non-confidential configuration artifacts (environment variables, config files, command-line arguments, port numbers) from container ../../Images to keep workloads portable across dev, test, and production environments.
 - **API Coordinates**:
   - `apiVersion: v1`, `kind: ConfigMap`. Belongs to the core API group (`""`).
 - **Namespaced Scope**:
@@ -49,10 +49,10 @@
   - You create the ConfigMap first, and then attach it to the Pod.
   - Inside the Pod, Kubernetes can either inject those key-value pairs as **environment variables** into the application's process table, or project them as **actual files on disk** into the container's filesystem.
 
-![ConfigMaps Overview](../../Images/config-maps.png)
+![ConfigMaps Overview](../../../../Images/config-maps.png)
 
 - **Formal Kubernetes Definition**:
-  - A `ConfigMap` is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or configuration files in a Volume. A ConfigMap allows you to decouple environment-specific configuration from your container images, so that your applications are easily portable.
+  - A `ConfigMap` is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or configuration files in a Volume. A ConfigMap allows you to decouple environment-specific configuration from your container ../../Images, so that your applications are easily portable.
 
 ```mermaid
 flowchart TD
@@ -123,7 +123,7 @@ binaryData:
   icon.png.gz: "H4sICDxw+VoCA2ljb24ucG5nAN2W70..."
 ```
 
-![Declarative ConfigMap](../../Images/declarative-config-map.png)
+![Declarative ConfigMap](../../../../Images/declarative-config-map.png)
 
 ---
 
@@ -131,7 +131,7 @@ binaryData:
 
 A primary source of confusion in CKA exam scenarios is how `kubectl create configmap` maps input arguments to internal `.data` keys:
 
-![Imperative ConfigMaps](../../Images/imperative-config-maps.png)
+![Imperative ConfigMaps](../../../../Images/imperative-config-maps.png)
 
 | CLI Flag Option | Syntax Example | Resulting ConfigMap `.data` Structure | Primary Use Case |
 | :--- | :--- | :--- | :--- |
@@ -153,8 +153,8 @@ A primary source of confusion in CKA exam scenarios is how `kubectl create confi
 
 There are three primary ways to expose ConfigMap data to containers:
 
-![ConfigMap in Pods](../../Images/configmap-in-pods.png)
-![Other Ways to Configure Environment](../../Images/other-ways-to-configure-env.png)
+![ConfigMap in Pods](../../../../Images/configmap-in-pods.png)
+![Other Ways to Configure Environment](../../../../Images/other-ways-to-configure-env.png)
 
 #### Pattern A: Bulk Environment Injection (`envFrom`)
 Loads all key-value pairs from the ConfigMap into the container's environment in a single declaration.

@@ -49,7 +49,7 @@
     4. Kubelet invokes the Container Runtime Interface (CRI) to write the new values directly into the container's existing cgroup files on the host filesystem.
     5. The Linux kernel immediately enforces the higher limits on existing running threads—with zero downtime and zero container restarts.
 
-![In-Place Pod Resizing](../Images/inplace-pod-resizing.png)
+![In-Place Pod Resizing](../../Images/inplace-pod-resizing.png)
 
 - **Formal Kubernetes Definition**:
   - In-place vertical scaling allows resizing CPU and memory resources assigned to containers without restarting the pod or its containers. Kubelet updates the container's resource limits and requests in place via the CRI `UpdateContainerResources` RPC, coordinating node capacity and reflecting progress in `status.resize` and `status.allocatedResources`.

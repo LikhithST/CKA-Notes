@@ -39,7 +39,7 @@
 
 - **Simple English Explanation (How It Works)**:
   - **The Limitation of Lower Abstractions**: A single Pod is an unmanaged, ephemeral process. A ReplicaSet ensures high availability by maintaining a fixed headcount of Pods, but it has no native mechanism for performing application updates (modifying the template of an active ReplicaSet does not touch existing Pods).
-  - **The Deployment Solution**: In production, applications require continuous updates: upgrading container images, injecting new environment variables, and rolling out security patches without dropping active user connections.
+  - **The Deployment Solution**: In production, applications require continuous updates: upgrading container ../Images, injecting new environment variables, and rolling out security patches without dropping active user connections.
   - **How the Deployment Controller Works**:
     A Deployment acts as an automated controller for ReplicaSets. Instead of interacting with individual Pods:
     1. When you define a Deployment with 3 replicas of version 1 (`v1`), the Deployment controller creates an underlying ReplicaSet (`RS-v1`) configured with 3 replicas. `RS-v1` then spawns the 3 `v1` Pods.
@@ -279,7 +279,7 @@ kubectl scale deployment/myapp-deployment --replicas=5
 # 1. View all workload resources at once in the namespace
 kubectl get all
 
-# 2. View deployments with wide output (shows containers, images, and selector)
+# 2. View deployments with wide output (shows containers, ../Images, and selector)
 kubectl get deployments -o wide
 
 # 3. View the underlying ReplicaSets created by the Deployment
@@ -362,7 +362,7 @@ flowchart TD
 > [!TIP]
 > **Scale vs. Rollout**:
 > - Scaling (`kubectl scale deployment <name> --replicas=10`) **does not** create a new revision or a new ReplicaSet.
-> - Updating images, environment variables, labels, or volume mounts **does** create a new revision.
+> - Updating ../Images, environment variables, labels, or volume mounts **does** create a new revision.
 
 ---
 
